@@ -8,7 +8,7 @@ public class DBConnection {
     // You should change these credentials to match your MySQL setup
     private static final String URL = "jdbc:mysql://localhost:3306/pawsconnect?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final String PASSWORD = "zaheerist25";
 
     public static Connection getConnection() {
         Connection conn = null;

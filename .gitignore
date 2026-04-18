@@ -1,0 +1,19 @@
+# Build outputs
+/target/
+/out/
+
+# IDE configs
+.idea/
+.vscode/
+*.iml
+
+# Maven binaries bundled
+/apache-maven-3.9.6/
+
+# Logs and temp files
+*.log
+*.class
+
+# OS-specific
+.DS_Store
+Thumbs.db
