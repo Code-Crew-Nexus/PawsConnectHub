@@ -673,7 +673,7 @@
 
 
 <script>
-  // ─── STATE ───────────────────────────────────────────────
+  // ─── STATE ───────────────────────────────────────────────────────────────
   let currentMode   = 'login';
   let currentMethod = 'email';
   let failAttempts  = 0;
@@ -681,40 +681,32 @@
   let otpInterval   = null;
   let otpExpiry     = 0;
 
-  // Return URL — go back to where user was
-  const returnTo = new URLSearchParams(window.location.search).get('return') || '/';
-
-  // ─── MODE SWITCH ─────────────────────────────────────────
+  // ─── MODE SWITCH ─────────────────────────────────────────────────────────
   function switchMode(mode) {
     currentMode = mode;
     const isSignup = mode === 'signup';
 
     document.getElementById('loginTab').classList.toggle('active', !isSignup);
     document.getElementById('signupTab').classList.toggle('active', isSignup);
-
     document.getElementById('authTitle').innerHTML = isSignup
-      ? 'Create your <em>account</em>'
-      : 'Welcome <em>back</em>';
+      ? 'Create your <em>account</em>' : 'Welcome <em>back</em>';
     document.getElementById('authSub').textContent = isSignup
       ? 'Join PawsConnect — free, genuine, and secure.'
       : 'Sign in to continue to PawsConnect.';
-
-    document.getElementById('signupExtra').style.display   = isSignup ? 'block' : 'none';
-    document.getElementById('confirmWrap').style.display   = isSignup ? 'block' : 'none';
-    document.getElementById('strengthWrap').style.display  = isSignup ? 'block' : 'none';
-    document.getElementById('forgotWrap').style.display    = isSignup ? 'none'  : 'block';
-    document.getElementById('emailBtnText').textContent    = isSignup ? 'Create Account' : 'Sign In';
-    document.getElementById('emailPanel').action           = isSignup ? 'register' : 'login';
-
+    document.getElementById('signupExtra').style.display  = isSignup ? 'block' : 'none';
+    document.getElementById('confirmWrap').style.display  = isSignup ? 'block' : 'none';
+    document.getElementById('strengthWrap').style.display = isSignup ? 'block' : 'none';
+    document.getElementById('forgotWrap').style.display   = isSignup ? 'none'  : 'block';
+    document.getElementById('emailBtnText').textContent   = isSignup ? 'Create Account' : 'Sign In';
+    document.getElementById('emailPanel').action          = isSignup ? 'register' : 'login';
     document.getElementById('switchText').innerHTML = isSignup
       ? 'Already have an account? <a onclick="switchMode(\'login\')">Sign in</a>'
       : 'Don\'t have an account? <a onclick="switchMode(\'signup\')">Create one free</a>';
-
     clearAllErrors();
     document.getElementById('verifyNotice').classList.remove('show');
   }
 
-  // ─── METHOD SWITCH ───────────────────────────────────────
+  // ─── METHOD SWITCH ────────────────────────────────────────────────────────
   function switchMethod(method) {
     currentMethod = method;
     ['email','google','phone'].forEach(m => {
@@ -725,10 +717,10 @@
     clearAllErrors();
   }
 
-  // ─── VALIDATION ──────────────────────────────────────────
+  // ─── VALIDATION HELPERS ───────────────────────────────────────────────────
   function showError(id, msg) {
     const el = document.getElementById(id);
-    el.textContent = msg; el.classList.add('show');
+    if (el) { el.textContent = msg; el.classList.add('show'); }
   }
   function clearError(id) {
     const el = document.getElementById(id);
@@ -739,239 +731,72 @@
       e.textContent = ''; e.classList.remove('show');
     });
   }
-
   function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
-  function isValidPhone(p) { return /^[6-9]\d{9}$/.test(p); }
 
-  // ─── PASSWORD STRENGTH ───────────────────────────────────
+  // ─── RATE LIMITING (client-side UI only) ──────────────────────────────────
   function checkRateLimit() {
     if (Date.now() < lockUntil) {
-      const secs = Math.ceil((lockUntil - Date.now()) / 1000);
-      document.getElementById('lockTimer').textContent = secs;
+      document.getElementById('lockTimer').textContent =
+        Math.ceil((lockUntil - Date.now()) / 1000);
       document.getElementById('rateWarning').classList.add('show');
       return false;
     }
     document.getElementById('rateWarning').classList.remove('show');
     return true;
   }
-
   function recordFailure() {
     failAttempts++;
     if (failAttempts >= 5) {
-      lockUntil = Date.now() + 30000; // 30 second lockout
+      lockUntil = Date.now() + 30000;
       failAttempts = 0;
-      const countdown = setInterval(() => {
-        const secs = Math.ceil((lockUntil - Date.now()) / 1000);
-        if (secs <= 0) {
-          clearInterval(countdown);
-          document.getElementById('rateWarning').classList.remove('show');
-        } else {
-          document.getElementById('lockTimer').textContent = secs;
-        }
+      const cd = setInterval(() => {
+        const s = Math.ceil((lockUntil - Date.now()) / 1000);
+        if (s <= 0) { clearInterval(cd); document.getElementById('rateWarning').classList.remove('show'); }
+        else document.getElementById('lockTimer').textContent = s;
       }, 1000);
     }
   }
 
-  // ─── EMAIL AUTH ──────────────────────────────────────────
-  async function handleEmailAuth() {
-    if (!checkRateLimit()) return;
-    const email    = document.getElementById('emailInput').value.trim();
-    const password = document.getElementById('passwordInput').value;
-    let valid = true;
-    if (!isValidEmail(email)) { showError('emailError', 'Please enter a valid email address.'); valid = false; }
-    if (password.length < 8)  { showError('passError', 'Password must be at least 8 characters.'); valid = false; }
-    if (currentMode === 'signup') {
-      const name    = document.getElementById('fullName').value.trim();
-      const confirm = document.getElementById('confirmInput').value;
-      if (!name)                { showError('nameError', 'Please enter your full name.'); valid = false; }
-      if (password !== confirm) { showError('confirmError', 'Passwords do not match.'); valid = false; }
-      let score = 0;
-      if (password.length >= 8)           score++;
-      if (/[A-Z]/.test(password))         score++;
-      if (/[0-9]/.test(password))         score++;
-      if (/[^A-Za-z0-9]/.test(password))  score++;
-      if (score < 2) { showError('passError', 'Too weak — add uppercase, numbers, or symbols.'); valid = false; }
-    }
-    if (!valid) { recordFailure(); return; }
-    setLoading('emailSubmitBtn', 'emailBtnText', 'emailSpinner', true);
-    try {
-      if (currentMode === 'signup') {
-        const name = document.getElementById('fullName').value.trim();
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
-        await updateProfile(cred.user, { displayName: name });
-        await sendEmailVerification(cred.user);
-        // Save user to Firestore
-        await setDoc(doc(db, 'users', cred.user.uid), {
-          name, email, createdAt: serverTimestamp(), role: 'user', verified: false
-        });
-        setLoading('emailSubmitBtn', 'emailBtnText', 'emailSpinner', false);
-        document.getElementById('verifyNotice').classList.add('show');
-        document.getElementById('emailSubmitBtn').style.display = 'none';
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = returnTo;
-      }
-    } catch(e) {
-      setLoading('emailSubmitBtn', 'emailBtnText', 'emailSpinner', false);
-      recordFailure();
-      const msgs = {
-        'auth/user-not-found':    'No account found with this email.',
-        'auth/wrong-password':    'Incorrect password. Try again.',
-        'auth/email-already-in-use': 'An account already exists with this email.',
-        'auth/too-many-requests': 'Too many attempts. Please wait a moment.',
-        'auth/invalid-credential': 'Email or password is incorrect.'
-      };
-      showError('emailError', msgs[e.code] || 'Something went wrong. Please try again.');
-    }
-  }
-
-  // ─── GOOGLE AUTH ─────────────────────────────────────────
-  async function handleGoogleAuth() {
-    if (!checkRateLimit()) return;
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user   = result.user;
-      // Save to Firestore if new user
-      await setDoc(doc(db, 'users', user.uid), {
-        name: user.displayName, email: user.email,
-        createdAt: serverTimestamp(), role: 'user', verified: true
-      }, { merge: true });
-      // ── Java Servlet backend (MySQL) ──
-      try {
-        await fetch('/api/user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            google_uid: user.uid, email: user.email,
-            display_name: user.displayName, photo_url: user.photoURL
-          })
-        });
-      } catch(e) { console.warn('Servlet not reachable (dev mode):', e.message); }
-      window.location.href = returnTo;
-    } catch(e) {
-      recordFailure();
-      if (e.code !== 'auth/popup-closed-by-user') {
-        showError('emailError', 'Google sign-in failed. Please try again.');
-      }
-    }
-  }
-
-  // ─── PHONE OTP ───────────────────────────────────────────
-  async function sendOTP() {
-    if (!checkRateLimit()) return;
-    const phone = document.getElementById('phoneInput').value.trim();
-    if (!isValidPhone(phone)) {
-      showError('phoneError', 'Enter a valid 10-digit Indian mobile number.'); return;
-    }
-    const btn = document.getElementById('sendOtpBtn');
-    btn.disabled = true; btn.textContent = 'Sending…';
-    try {
-      if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sendOtpBtn', { size: 'invisible' });
-      }
-      window.confirmationResult = await signInWithPhoneNumber(auth, '+91' + phone, window.recaptchaVerifier);
-      btn.textContent = 'Resend';
-      document.getElementById('otpSection').style.display = 'block';
-      document.getElementById('o1').focus();
-      startOtpTimer(60);
-    } catch(e) {
-      btn.disabled = false; btn.textContent = 'Send OTP';
-      showError('phoneError', 'Could not send OTP. Check number and try again.');
-    }
-  }
-
-  function startOtpTimer(secs) {
-    clearInterval(otpInterval);
-    otpExpiry = Date.now() + secs * 1000;
-    const timerEl = document.getElementById('otpTimer');
-    otpInterval = setInterval(() => {
-      const rem = Math.ceil((otpExpiry - Date.now()) / 1000);
-      if (rem <= 0) {
-        clearInterval(otpInterval);
-        timerEl.innerHTML = 'OTP expired. <span class="resend-link" onclick="sendOTP()">Resend</span>';
-      } else {
-        timerEl.textContent = `OTP expires in ${rem}s`;
-      }
-    }, 1000);
-  }
-
-  function otpMove(el, nextId) {
-    if (el.value.length === 1) document.getElementById(nextId)?.focus();
-  }
-  function otpBack(e, el, prevId) {
-    if (e.key === 'Backspace' && el.value === '' && prevId)
-      document.getElementById(prevId)?.focus();
-  }
-  function otpComplete() {
-    // auto-verify when last digit entered
-    const otp = ['o1','o2','o3','o4','o5','o6'].map(id => document.getElementById(id).value).join('');
-    if (otp.length === 6) setTimeout(verifyOTP, 200);
-  }
-
-  async function verifyOTP() {
-    if (!checkRateLimit()) return;
-    if (Date.now() > otpExpiry) {
-      showError('otpError', 'OTP expired. Please request a new one.'); return;
-    }
-    const otp = ['o1','o2','o3','o4','o5','o6'].map(id => document.getElementById(id).value).join('');
-    if (otp.length < 6) { showError('otpError', 'Please enter the complete 6-digit OTP.'); return; }
-    setLoading('otpSubmitBtn','otpBtnText','otpSpinner', true);
-    try {
-      await window.confirmationResult.confirm(otp);
-      window.location.href = returnTo;
-    } catch(e) {
-      recordFailure();
-      setLoading('otpSubmitBtn','otpBtnText','otpSpinner', false);
-      showError('otpError', 'Incorrect OTP. Please try again.');
-    }
-  }
-
-  // ─── FORGOT PASSWORD ─────────────────────────────────────
-  async function sendPasswordReset() {
-    const email = document.getElementById('emailInput').value.trim();
-    if (!isValidEmail(email)) {
-      showError('emailError', 'Enter your email above first, then click Forgot password.'); return;
-    }
-    try {
-      await sendPasswordResetEmail(auth, email);
-      alert('Password reset email sent to ' + email + '. Check your inbox.');
-    } catch(e) {
-      showError('emailError', 'Could not send reset email. Check the address and try again.');
-    }
-  }
-
-  // ─── HELPERS ─────────────────────────────────────────────
-  function togglePass(inputId, btn) {
-    const input = document.getElementById(inputId);
-    const show = input.type === 'password';
-    input.type = show ? 'text' : 'password';
-    btn.textContent = show ? '🙈' : '👁';
-  }
-
-  function setLoading(btnId, textId, spinnerId, loading) {
-    const btn     = document.getElementById(btnId);
-    const text    = document.getElementById(textId);
-    const spinner = document.getElementById(spinnerId);
-    btn.disabled         = loading;
-    text.style.display   = loading ? 'none' : 'inline';
-    spinner.style.display = loading ? 'block' : 'none';
-  }
-
-  // ─── PASSWORD STRENGTH (correct version) ────────────────
+  // ─── PASSWORD STRENGTH ────────────────────────────────────────────────────
   function checkPasswordStrength(pw) {
-    const ids = ['s1','s2','s3','s4'];
-    const segs = ids.map(id => document.getElementById(id));
+    const segs   = ['s1','s2','s3','s4'].map(id => document.getElementById(id));
+    const colours = ['','#dc2626','#f59e0b','#4a8c5c','#166534'];
+    const labels  = ['','Weak','Fair — add uppercase or symbols','Good','Strong ✓'];
     let score = 0;
-    if (pw.length >= 8)            score++;
+    if (pw.length >= 8)           score++;
     if (/[A-Z]/.test(pw))         score++;
     if (/[0-9]/.test(pw))         score++;
     if (/[^A-Za-z0-9]/.test(pw))  score++;
-    const colours = ['','#dc2626','#f59e0b','#4a8c5c','#166534'];
-    const labels  = ['','Weak','Fair — add uppercase or symbols','Good','Strong ✓'];
     segs.forEach((s,i) => s.style.background = i < score ? colours[score] : 'var(--mist)');
     const lbl = document.getElementById('strengthLabel');
     lbl.textContent = pw.length ? (labels[score] || 'Enter a password') : 'Enter a password';
     lbl.style.color = pw.length ? (colours[score] || 'var(--light)') : 'var(--light)';
+  }
+
+  // ─── TOGGLE PASSWORD VISIBILITY ──────────────────────────────────────────
+  function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const show  = input.type === 'password';
+    input.type  = show ? 'text' : 'password';
+    btn.textContent = show ? '🙈' : '👁';
+  }
+
+  // ─── LOADING STATE ────────────────────────────────────────────────────────
+  function setLoading(btnId, textId, spinnerId, loading) {
+    document.getElementById(btnId).disabled            = loading;
+    document.getElementById(textId).style.display      = loading ? 'none'   : 'inline';
+    document.getElementById(spinnerId).style.display   = loading ? 'block'  : 'none';
+  }
+
+  // ─── GOOGLE / PHONE — disabled (servlet backend only) ────────────────────
+  function handleGoogleAuth() {
+    alert('Google sign-in is not available in this version. Please use email and password.');
+  }
+  function sendOTP() {
+    alert('Phone OTP is not available in this version. Please use email and password.');
+  }
+  function sendPasswordReset() {
+    alert('Password reset: please contact the admin at zaheerares1256@gmail.com');
   }
 </script>
 <script src="js/auth.js"></script>

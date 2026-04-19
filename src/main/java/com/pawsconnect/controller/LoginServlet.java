@@ -18,7 +18,7 @@ import com.google.gson.JsonObject;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-    
+
     private UserDAO userDAO;
 
     @Override
@@ -27,39 +27,40 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-        Gson gson = new Gson();
         JsonObject jsonResponse = new JsonObject();
 
-        String email = request.getParameter("email");
+        String email    = request.getParameter("email");
         String password = request.getParameter("password");
-        
+
         if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             jsonResponse.addProperty("error", "Email and password are required.");
-            out.print(gson.toJson(jsonResponse));
+            out.print(jsonResponse);
             out.flush();
             return;
         }
 
         User user = userDAO.loginUser(email, password);
-        
+
         if (user != null) {
-            // Login success, create session
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            
+
             jsonResponse.addProperty("success", true);
-            out.print(gson.toJson(jsonResponse));
+            jsonResponse.addProperty("role", user.getRole());         // ← NEW: frontend needs this
+            jsonResponse.addProperty("fullName", user.getFullName()); // ← NEW: for navbar greeting
         } else {
-            // Login failed
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             jsonResponse.addProperty("error", "Invalid email or password.");
-            out.print(gson.toJson(jsonResponse));
         }
+
+        out.print(jsonResponse);
         out.flush();
     }
 }
