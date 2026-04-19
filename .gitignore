@@ -1,7 +1,8 @@
 # Build outputs
-/target/
-/out/
-/dist/
+target/
+**/target/
+out/
+dist/
 
 # Maven and Java
 *.class

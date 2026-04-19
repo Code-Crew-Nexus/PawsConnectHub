@@ -1,7 +1,0 @@
-com\pawsconnect\controller\LogoutServlet.class
-com\pawsconnect\controller\LoginServlet.class
-com\pawsconnect\controller\RegisterServlet.class
-com\pawsconnect\controller\SessionServlet.class
-com\pawsconnect\dao\UserDAO.class
-com\pawsconnect\util\DBConnection.class
-com\pawsconnect\model\User.class
