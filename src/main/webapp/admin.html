@@ -1,795 +1,1216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Admin Panel — PawsConnect</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
-    <style>
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        :root {
-            --forest: #1a3a2a; --moss: #2d5a3d; --leaf: #4a8c5c;
-            --sage: #7ab893;   --mist: #c8e6d0; --cream: #f5f0e8;
-            --paper: #fdfdf8;  --warm: #f9f4ec; --earth: #8b5e3c;
-            --sun: #e8a020;    --text: #1a2a1e; --mid: #3d5a45;
-            --light: #6b8f74;  --red: #dc2626;  --red-bg: #fef2f2;
-            --blue: #1a5276;   --blue-bg: #eaf0fb;
-        }
-        body { font-family:'DM Sans',sans-serif; background:var(--paper); color:var(--text); min-height:100vh; }
+ <meta charset="UTF-8"/>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <title>Admin Panel PawsConnect</title>
+ <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+ <style>
+ *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+ :root {
+ --forest: #1a3a2a; --moss: #2d5a3d; --leaf: #4a8c5c;
+ --sage: #7ab893; --mist: #c8e6d0; --cream: #f5f0e8;
+ --paper: #fdfdf8; --warm: #f9f4ec; --earth: #8b5e3c;
+ --sun: #e8a020; --text: #1a2a1e; --mid: #3d5a45;
+ --light: #6b8f74; --red: #dc2626; --red-bg: #fef2f2;
+ --blue: #1a5276; --blue-bg: #eaf0fb;
+ }
+ body { font-family:'DM Sans',sans-serif; background:var(--paper); color:var(--text); min-height:100vh; }
 
-        /* ── NAV ── */
-        nav {
-            position:fixed; top:0; left:0; right:0; z-index:200;
-            padding:1rem 3rem; display:flex; align-items:center; justify-content:space-between;
-            background:var(--forest); border-bottom:2px solid var(--earth);
-        }
-        .nav-logo { display:flex; align-items:center; gap:0.6rem; text-decoration:none; }
-        .paw-icon { width:34px; height:34px; background:var(--earth); border-radius:50% 50% 50% 20%;
-            display:flex; align-items:center; justify-content:center; font-size:1rem; transform:rotate(-15deg); }
-        .nav-logo span { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--paper); font-weight:700; }
-        .nav-logo span em { font-style:italic; color:var(--sage); }
-        .nav-badge { background:var(--earth); color:white; font-size:0.72rem; font-weight:600;
-            padding:0.25rem 0.7rem; border-radius:100px; letter-spacing:0.06em; }
-        .nav-right { display:flex; align-items:center; gap:1rem; }
-        .nav-user { color:var(--mist); font-size:0.85rem; font-weight:300; }
-        .nav-back { color:var(--sage); font-size:0.82rem; text-decoration:none; transition:color 0.2s; }
-        .nav-back:hover { color:white; }
-        .logout-btn { background:var(--moss); color:white; border:none; padding:0.45rem 1rem;
-            border-radius:100px; font-family:'DM Sans',sans-serif; font-size:0.82rem;
-            font-weight:500; cursor:pointer; transition:background 0.2s; }
-        .logout-btn:hover { background:var(--leaf); }
+ /* NAV */
+ nav {
+ position:fixed; top:0; left:0; right:0; z-index:200;
+ padding:1rem 3rem; display:flex; align-items:center; justify-content:space-between;
+ background:var(--forest); border-bottom:2px solid var(--earth);
+ }
+ .nav-logo { display:flex; align-items:center; gap:0.6rem; text-decoration:none; }
+ .paw-icon { width:34px; height:34px; background:var(--earth); border-radius:50% 50% 50% 20%;
+ display:flex; align-items:center; justify-content:center; font-size:1rem; transform:rotate(-15deg); }
+ .nav-logo span { font-family:'Playfair Display',serif; font-size:1.3rem; color:var(--paper); font-weight:700; }
+ .nav-logo span em { font-style:italic; color:var(--sage); }
+ .nav-badge { background:var(--earth); color:white; font-size:0.72rem; font-weight:600;
+ padding:0.25rem 0.7rem; border-radius:100px; letter-spacing:0.06em; }
+ .nav-right { display:flex; align-items:center; gap:1rem; }
+ .nav-user { color:var(--mist); font-size:0.85rem; font-weight:300; }
+ .nav-back { color:var(--sage); font-size:0.82rem; text-decoration:none; transition:color 0.2s; }
+ .nav-back:hover { color:white; }
+ .logout-btn { background:var(--moss); color:white; border:none; padding:0.45rem 1rem;
+ border-radius:100px; font-family:'DM Sans',sans-serif; font-size:0.82rem;
+ font-weight:500; cursor:pointer; transition:background 0.2s; }
+ .logout-btn:hover { background:var(--leaf); }
 
-        /* ── LAYOUT ── */
-        .layout { display:grid; grid-template-columns:220px 1fr; min-height:100vh; padding-top:64px; }
+ /* LAYOUT */
+ .layout { display:grid; grid-template-columns:220px 1fr; min-height:100vh; padding-top:64px; }
 
-        /* ── SIDEBAR ── */
-        .sidebar {
-            background:var(--warm); border-right:1.5px solid var(--mist);
-            padding:2rem 0; position:sticky; top:64px; height:calc(100vh - 64px); overflow-y:auto;
-        }
-        .sidebar-section { padding:0 1.2rem; margin-bottom:1.5rem; }
-        .sidebar-label { font-size:0.68rem; font-weight:600; text-transform:uppercase;
-            letter-spacing:0.1em; color:var(--light); margin-bottom:0.6rem; padding:0 0.4rem; }
-        .sidebar-btn {
-            display:flex; align-items:center; gap:0.6rem; width:100%;
-            padding:0.6rem 0.8rem; border:none; border-radius:10px;
-            background:transparent; color:var(--mid); font-family:'DM Sans',sans-serif;
-            font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.2s;
-            text-align:left; margin-bottom:0.2rem;
-        }
-        .sidebar-btn:hover { background:var(--mist); color:var(--forest); }
-        .sidebar-btn.active { background:var(--forest); color:white; }
-        .sidebar-btn .icon { font-size:1rem; width:20px; text-align:center; }
-        .sidebar-count { margin-left:auto; background:var(--earth); color:white;
-            font-size:0.68rem; font-weight:600; padding:0.1rem 0.45rem; border-radius:100px; }
-        .sidebar-count.green { background:var(--leaf); }
-        .sidebar-count.red   { background:var(--red); }
+ /* SIDEBAR */
+ .sidebar {
+ background:var(--warm); border-right:1.5px solid var(--mist);
+ padding:2rem 0; position:sticky; top:64px; height:calc(100vh - 64px); overflow-y:auto;
+ }
+ .sidebar-section { padding:0 1.2rem; margin-bottom:1.5rem; }
+ .sidebar-label { font-size:0.68rem; font-weight:600; text-transform:uppercase;
+ letter-spacing:0.1em; color:var(--light); margin-bottom:0.6rem; padding:0 0.4rem; }
+ .sidebar-btn {
+ display:flex; align-items:center; gap:0.6rem; width:100%;
+ padding:0.6rem 0.8rem; border:none; border-radius:10px;
+ background:transparent; color:var(--mid); font-family:'DM Sans',sans-serif;
+ font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.2s;
+ text-align:left; margin-bottom:0.2rem;
+ }
+ .sidebar-btn:hover { background:var(--mist); color:var(--forest); }
+ .sidebar-btn.active { background:var(--forest); color:white; }
+ .sidebar-btn .icon { font-size:1rem; width:20px; text-align:center; }
+ .sidebar-count { margin-left:auto; background:var(--earth); color:white;
+ font-size:0.68rem; font-weight:600; padding:0.1rem 0.45rem; border-radius:100px; }
+ .sidebar-count.green { background:var(--leaf); }
+ .sidebar-count.red { background:var(--red); }
 
-        /* ── MAIN ── */
-        .main { padding:2.5rem 3rem; overflow-x:auto; }
+ /* MAIN */
+ .main { padding:2.5rem 3rem; overflow-x:auto; }
 
-        /* ── SECTION HEADER ── */
-        .section-header { display:flex; align-items:center; justify-content:space-between;
-            margin-bottom:1.8rem; flex-wrap:wrap; gap:1rem; }
-        .section-title { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--forest); }
-        .section-title em { font-style:italic; color:var(--earth); }
-        .section-sub { font-size:0.85rem; color:var(--light); font-weight:300; margin-top:0.2rem; }
-        .refresh-btn { background:var(--warm); border:1.5px solid var(--mist); color:var(--mid);
-            padding:0.5rem 1rem; border-radius:100px; font-family:'DM Sans',sans-serif;
-            font-size:0.8rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
-        .refresh-btn:hover { border-color:var(--sage); color:var(--forest); }
+ /* SECTION HEADER */
+ .section-header { display:flex; align-items:center; justify-content:space-between;
+ margin-bottom:1.8rem; flex-wrap:wrap; gap:1rem; }
+ .section-title { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--forest); }
+ .section-title em { font-style:italic; color:var(--earth); }
+ .section-sub { font-size:0.85rem; color:var(--light); font-weight:300; margin-top:0.2rem; }
+ .refresh-btn { background:var(--warm); border:1.5px solid var(--mist); color:var(--mid);
+ padding:0.5rem 1rem; border-radius:100px; font-family:'DM Sans',sans-serif;
+ font-size:0.8rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+ .refresh-btn:hover { border-color:var(--sage); color:var(--forest); }
 
-        /* ── STATS ROW ── */
-        .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
-        .stat-card { background:var(--warm); border:1.5px solid var(--mist);
-            border-radius:16px; padding:1.2rem 1.5rem; }
-        .stat-card .stat-label { font-size:0.75rem; font-weight:600; text-transform:uppercase;
-            letter-spacing:0.07em; color:var(--light); margin-bottom:0.4rem; }
-        .stat-card .stat-num { font-family:'Playfair Display',serif; font-size:2rem; color:var(--forest); font-weight:700; }
-        .stat-card .stat-sub { font-size:0.75rem; color:var(--light); font-weight:300; margin-top:0.2rem; }
-        .stat-card.warn .stat-num { color:var(--earth); }
-        .stat-card.danger .stat-num { color:var(--red); }
-        .stat-card.ok   .stat-num { color:var(--leaf); }
+ /* STATS ROW */
+ .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+ .stat-card { background:var(--warm); border:1.5px solid var(--mist);
+ border-radius:16px; padding:1.2rem 1.5rem; }
+ .stat-card .stat-label { font-size:0.75rem; font-weight:600; text-transform:uppercase;
+ letter-spacing:0.07em; color:var(--light); margin-bottom:0.4rem; }
+ .stat-card .stat-num { font-family:'Playfair Display',serif; font-size:2rem; color:var(--forest); font-weight:700; }
+ .stat-card .stat-sub { font-size:0.75rem; color:var(--light); font-weight:300; margin-top:0.2rem; }
+ .stat-card.warn .stat-num { color:var(--earth); }
+ .stat-card.danger .stat-num { color:var(--red); }
+ .stat-card.ok .stat-num { color:var(--leaf); }
 
-        /* ── TABLE ── */
-        .table-wrap { background:white; border:1.5px solid var(--mist); border-radius:16px; overflow:hidden; }
-        .table-top { padding:1rem 1.5rem; border-bottom:1px solid var(--mist);
-            display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.8rem; }
-        .table-top h4 { font-size:0.9rem; font-weight:600; color:var(--forest); }
-        .search-input { padding:0.45rem 0.9rem; border:1.5px solid var(--mist); border-radius:100px;
-            font-family:'DM Sans',sans-serif; font-size:0.82rem; outline:none; background:var(--warm);
-            transition:border-color 0.2s; }
-        .search-input:focus { border-color:var(--sage); }
-        table { width:100%; border-collapse:collapse; font-size:0.85rem; }
-        thead th { background:var(--forest); color:white; padding:0.75rem 1rem;
-            font-weight:500; font-size:0.78rem; text-align:left; white-space:nowrap; }
-        tbody tr { border-bottom:1px solid var(--mist); transition:background 0.15s; }
-        tbody tr:hover { background:var(--warm); }
-        tbody tr:last-child { border-bottom:none; }
-        td { padding:0.75rem 1rem; vertical-align:middle; }
-        .td-name { font-weight:500; color:var(--forest); }
-        .td-email { color:var(--light); font-size:0.8rem; }
-        .td-id { color:var(--light); font-size:0.78rem; font-family:monospace; }
+ /* TABLE */
+ .table-wrap { background:white; border:1.5px solid var(--mist); border-radius:16px; overflow:hidden; }
+ .table-top { padding:1rem 1.5rem; border-bottom:1px solid var(--mist);
+ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.8rem; }
+ .table-top h4 { font-size:0.9rem; font-weight:600; color:var(--forest); }
+ .search-input { padding:0.45rem 0.9rem; border:1.5px solid var(--mist); border-radius:100px;
+ font-family:'DM Sans',sans-serif; font-size:0.82rem; outline:none; background:var(--warm);
+ transition:border-color 0.2s; }
+ .search-input:focus { border-color:var(--sage); }
+ table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+ thead th { background:var(--forest); color:white; padding:0.75rem 1rem;
+ font-weight:500; font-size:0.78rem; text-align:left; white-space:nowrap; }
+ tbody tr { border-bottom:1px solid var(--mist); transition:background 0.15s; }
+ tbody tr:hover { background:var(--warm); }
+ tbody tr:last-child { border-bottom:none; }
+ td { padding:0.75rem 1rem; vertical-align:middle; }
+ .td-name { font-weight:500; color:var(--forest); }
+ .td-email { color:var(--light); font-size:0.8rem; }
+ .td-id { color:var(--light); font-size:0.78rem; font-family:monospace; }
 
-        /* ── STATUS BADGES ── */
-        .badge { display:inline-block; padding:0.2rem 0.6rem; border-radius:100px;
-            font-size:0.72rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; }
-        .badge.pending  { background:#FEF3C7; color:#92400E; }
-        .badge.approved { background:#D1FAE5; color:#065F46; }
-        .badge.rejected { background:var(--red-bg); color:var(--red); }
-        .badge.admin    { background:#EDE9FE; color:#5B21B6; }
-        .badge.user     { background:var(--mist); color:var(--moss); }
-        .badge.active   { background:#D1FAE5; color:#065F46; }
+ /* STATUS BADGES */
+ .badge { display:inline-block; padding:0.2rem 0.6rem; border-radius:100px;
+ font-size:0.72rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; }
+ .badge.pending { background:#FEF3C7; color:#92400E; }
+ .badge.approved { background:#D1FAE5; color:#065F46; }
+ .badge.rejected { background:var(--red-bg); color:var(--red); }
+ .badge.admin { background:#EDE9FE; color:#5B21B6; }
+ .badge.user { background:var(--mist); color:var(--moss); }
+ .badge.active { background:#D1FAE5; color:#065F46; }
 
-        /* ── ACTION BUTTONS ── */
-        .actions { display:flex; gap:0.4rem; flex-wrap:wrap; }
-        .btn { padding:0.3rem 0.7rem; border-radius:8px; font-family:'DM Sans',sans-serif;
-            font-size:0.75rem; font-weight:500; cursor:pointer; border:1.5px solid transparent;
-            transition:all 0.2s; white-space:nowrap; }
-        .btn-approve  { background:#D1FAE5; color:#065F46; border-color:#6EE7B7; }
-        .btn-approve:hover  { background:#6EE7B7; }
-        .btn-reject   { background:#FEF3C7; color:#92400E; border-color:#FCD34D; }
-        .btn-reject:hover   { background:#FCD34D; }
-        .btn-delete   { background:var(--red-bg); color:var(--red); border-color:#FCA5A5; }
-        .btn-delete:hover   { background:#FCA5A5; }
-        .btn-promote  { background:var(--blue-bg); color:var(--blue); border-color:#93C5FD; }
-        .btn-promote:hover  { background:#93C5FD; }
-        .btn-demote   { background:#F5F3FF; color:#5B21B6; border-color:#C4B5FD; }
-        .btn-demote:hover   { background:#C4B5FD; }
-        .btn-edit     { background:var(--warm); color:var(--mid); border-color:var(--mist); }
-        .btn-edit:hover     { background:var(--mist); }
+ /* ACTION BUTTONS */
+ .actions { display:flex; gap:0.4rem; flex-wrap:wrap; }
+ .btn { padding:0.3rem 0.7rem; border-radius:8px; font-family:'DM Sans',sans-serif;
+ font-size:0.75rem; font-weight:500; cursor:pointer; border:1.5px solid transparent;
+ transition:all 0.2s; white-space:nowrap; }
+ .btn-approve { background:#D1FAE5; color:#065F46; border-color:#6EE7B7; }
+ .btn-approve:hover { background:#6EE7B7; }
+ .btn-reject { background:#FEF3C7; color:#92400E; border-color:#FCD34D; }
+ .btn-reject:hover { background:#FCD34D; }
+ .btn-delete { background:var(--red-bg); color:var(--red); border-color:#FCA5A5; }
+ .btn-delete:hover { background:#FCA5A5; }
+ .btn-promote { background:var(--blue-bg); color:var(--blue); border-color:#93C5FD; }
+ .btn-promote:hover { background:#93C5FD; }
+ .btn-demote { background:#F5F3FF; color:#5B21B6; border-color:#C4B5FD; }
+ .btn-demote:hover { background:#C4B5FD; }
+ .btn-edit { background:var(--warm); color:var(--mid); border-color:var(--mist); }
+ .btn-edit:hover { background:var(--mist); }
 
-        /* ── PANEL (tab content) ── */
-        .panel { display:none; }
-        .panel.active { display:block; animation:fadeUp 0.3s ease; }
-        @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+ /* PANEL (tab content) */
+ .panel { display:none; }
+ .panel.active { display:block; animation:fadeUp 0.3s ease; }
+ @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-        /* ── EMPTY STATE ── */
-        .empty { padding:3rem; text-align:center; color:var(--light); font-weight:300; }
-        .empty .empty-icon { font-size:2.5rem; margin-bottom:0.7rem; }
+ /* EMPTY STATE */
+ .empty { padding:3rem; text-align:center; color:var(--light); font-weight:300; }
+ .empty .empty-icon { font-size:2.5rem; margin-bottom:0.7rem; }
 
-        /* ── LOADING ── */
-        .loading { padding:3rem; text-align:center; color:var(--light); }
-        .spinner { display:inline-block; width:24px; height:24px;
-            border:3px solid var(--mist); border-top-color:var(--leaf);
-            border-radius:50%; animation:spin 0.7s linear infinite; }
-        @keyframes spin { to{transform:rotate(360deg)} }
+ /* LOADING */
+ .loading { padding:3rem; text-align:center; color:var(--light); }
+ .spinner { display:inline-block; width:24px; height:24px;
+ border:3px solid var(--mist); border-top-color:var(--leaf);
+ border-radius:50%; animation:spin 0.7s linear infinite; }
+ @keyframes spin { to{transform:rotate(360deg)} }
 
-        /* ── TOAST ── */
-        #toast { position:fixed; bottom:2rem; right:2rem; z-index:999;
-            background:var(--forest); color:white; padding:0.8rem 1.5rem;
-            border-radius:12px; font-size:0.88rem; font-weight:500;
-            opacity:0; transform:translateY(10px);
-            transition:all 0.3s; pointer-events:none; }
-        #toast.show { opacity:1; transform:translateY(0); }
-        #toast.error { background:var(--red); }
+ /* TOAST */
+ #toast { position:fixed; bottom:2rem; right:2rem; z-index:999;
+ background:var(--forest); color:white; padding:0.8rem 1.5rem;
+ border-radius:12px; font-size:0.88rem; font-weight:500;
+ opacity:0; transform:translateY(10px);
+ transition:all 0.3s; pointer-events:none; }
+ #toast.show { opacity:1; transform:translateY(0); }
+ #toast.error { background:var(--red); }
 
-        /* ── CONFIRM MODAL ── */
-        .confirm-overlay { position:fixed; inset:0; background:rgba(26,58,42,0.5);
-            backdrop-filter:blur(4px); z-index:500; display:none;
-            align-items:center; justify-content:center; }
-        .confirm-overlay.open { display:flex; }
-        .confirm-box { background:var(--paper); border-radius:20px; padding:2rem;
-            max-width:380px; width:90%; animation:fadeUp 0.3s ease; }
-        .confirm-box h4 { font-family:'Playfair Display',serif; font-size:1.3rem;
-            color:var(--forest); margin-bottom:0.6rem; }
-        .confirm-box p { font-size:0.88rem; color:var(--mid); font-weight:300;
-            line-height:1.7; margin-bottom:1.5rem; }
-        .confirm-btns { display:flex; gap:0.8rem; justify-content:flex-end; }
-        .confirm-cancel { background:var(--warm); border:1.5px solid var(--mist);
-            color:var(--mid); padding:0.6rem 1.2rem; border-radius:10px;
-            font-family:'DM Sans',sans-serif; font-size:0.88rem; cursor:pointer; }
-        .confirm-ok { background:var(--red); color:white; border:none;
-            padding:0.6rem 1.2rem; border-radius:10px;
-            font-family:'DM Sans',sans-serif; font-size:0.88rem; cursor:pointer; }
+ /* CONFIRM MODAL */
+ .confirm-overlay { position:fixed; inset:0; background:rgba(26,58,42,0.5);
+ backdrop-filter:blur(4px); z-index:500; display:none;
+ align-items:center; justify-content:center; }
+ .confirm-overlay.open { display:flex; }
+ .confirm-box { background:var(--paper); border-radius:20px; padding:2rem;
+ max-width:380px; width:90%; animation:fadeUp 0.3s ease; }
+ .confirm-box h4 { font-family:'Playfair Display',serif; font-size:1.3rem;
+ color:var(--forest); margin-bottom:0.6rem; }
+ .confirm-box p { font-size:0.88rem; color:var(--mid); font-weight:300;
+ line-height:1.7; margin-bottom:1.5rem; }
+ .confirm-btns { display:flex; gap:0.8rem; justify-content:flex-end; }
+ .confirm-cancel { background:var(--warm); border:1.5px solid var(--mist);
+ color:var(--mid); padding:0.6rem 1.2rem; border-radius:10px;
+ font-family:'DM Sans',sans-serif; font-size:0.88rem; cursor:pointer; }
+ .confirm-ok { background:var(--red); color:white; border:none;
+ padding:0.6rem 1.2rem; border-radius:10px;
+ font-family:'DM Sans',sans-serif; font-size:0.88rem; cursor:pointer; }
 
-        /* ── EDIT MODAL ── */
-        .edit-overlay { position:fixed; inset:0; background:rgba(26,58,42,0.5);
-            backdrop-filter:blur(4px); z-index:500; display:none;
-            align-items:center; justify-content:center; padding:1rem; }
-        .edit-overlay.open { display:flex; }
-        .edit-box { background:var(--paper); border-radius:20px; padding:2rem;
-            max-width:480px; width:100%; animation:fadeUp 0.3s ease; }
-        .edit-box h4 { font-family:'Playfair Display',serif; font-size:1.3rem;
-            color:var(--forest); margin-bottom:1rem; }
-        .edit-box textarea { width:100%; padding:0.7rem 0.9rem;
-            border:1.5px solid var(--mist); border-radius:12px;
-            background:var(--warm); font-family:'DM Sans',sans-serif;
-            font-size:0.88rem; color:var(--text); outline:none;
-            resize:vertical; min-height:100px; transition:border-color 0.2s; }
-        .edit-box textarea:focus { border-color:var(--sage); }
-        .edit-btns { display:flex; gap:0.8rem; justify-content:flex-end; margin-top:1rem; }
-        .edit-cancel { background:var(--warm); border:1.5px solid var(--mist);
-            color:var(--mid); padding:0.6rem 1.2rem; border-radius:10px;
-            font-family:'DM Sans',sans-serif; font-size:0.88rem; cursor:pointer; }
-        .edit-save { background:var(--forest); color:white; border:none;
-            padding:0.6rem 1.2rem; border-radius:10px;
-            font-family:'DM Sans',sans-serif; font-size:0.88rem; cursor:pointer; }
+ /* EDIT MODAL */
+ .edit-btns { display:flex; gap:0.8rem; justify-content:flex-end; margin-top:1rem; }
+ .edit-cancel { background:var(--warm); border:1.5px solid var(--mist);
+ color:var(--mid); padding:0.6rem 1.2rem; border-radius:10px;
+ font-family:'DM Sans',sans-serif; font-size:0.88rem; cursor:pointer; }
+ .edit-save { background:var(--forest); color:white; border:none;
+ padding:0.6rem 1.2rem; border-radius:10px;
+ font-family:'DM Sans',sans-serif; font-size:0.88rem; cursor:pointer; }
+ .entity-edit-overlay { position:fixed; inset:0; background:rgba(26,58,42,0.52);
+ backdrop-filter:blur(4px); z-index:540; display:none; align-items:center; justify-content:center; padding:1rem; }
+ .entity-edit-overlay.open { display:flex; }
+ .entity-edit-box { background:var(--paper); border-radius:22px; padding:1.2rem;
+ max-width:780px; width:100%; max-height:88vh; overflow:auto; animation:fadeUp 0.3s ease; }
+ .entity-edit-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.85rem; margin-top:1rem; }
+ .entity-edit-field { display:flex; flex-direction:column; gap:0.35rem; }
+ .entity-edit-field.full { grid-column:1/-1; }
+ .entity-edit-field label { color:var(--forest); font-size:0.76rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; }
+ .entity-edit-field input,
+ .entity-edit-field select,
+ .entity-edit-field textarea { width:100%; border:1.5px solid var(--mist); border-radius:13px;
+ background:var(--warm); color:var(--text); font-family:'DM Sans',sans-serif;
+ font-size:0.9rem; padding:0.72rem 0.85rem; outline:none; transition:border-color 0.2s, box-shadow 0.2s; }
+ .entity-edit-field textarea { min-height:170px; resize:vertical; line-height:1.65; }
+ .entity-edit-field input:focus,
+ .entity-edit-field select:focus,
+ .entity-edit-field textarea:focus { border-color:var(--sage); box-shadow:0 0 0 3px rgba(143,188,143,0.18); }
 
-        @media(max-width:900px){
-            .layout { grid-template-columns:1fr; }
-            .sidebar { position:static; height:auto; display:flex; flex-wrap:wrap;
-                padding:1rem; gap:0.5rem; border-right:none; border-bottom:1.5px solid var(--mist); }
-            .sidebar-section { margin-bottom:0; }
-            .main { padding:1.5rem; }
-            nav { padding:1rem 1.5rem; }
-            .stats-row { grid-template-columns:1fr 1fr; }
-        }
-    </style>
+ /* BLOG REVIEW MODAL */
+ .review-overlay { position:fixed; inset:0; background:rgba(26,58,42,0.5);
+ backdrop-filter:blur(4px); z-index:520; display:none;
+ align-items:center; justify-content:center; padding:1rem; }
+ .review-overlay.open { display:flex; }
+ .review-box { background:var(--paper); border-radius:20px; padding:1.2rem;
+ max-width:760px; width:100%; max-height:85vh; overflow:auto; animation:fadeUp 0.3s ease; }
+ .review-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
+ .review-head h4 { font-family:'Playfair Display',serif; font-size:1.35rem; color:var(--forest); }
+ .review-close { border:1px solid var(--mist); background:var(--warm); color:var(--forest); cursor:pointer;
+ min-width:34px; height:34px; border-radius:999px; font-size:1rem; line-height:1; display:flex; align-items:center; justify-content:center; }
+ .review-close:hover { border-color:var(--sage); background:white; }
+ .review-meta { display:grid; grid-template-columns:repeat(2,1fr); gap:0.6rem; margin-top:0.8rem; }
+ .review-meta div { background:var(--warm); border:1px solid var(--mist);
+ border-radius:10px; padding:0.55rem 0.7rem; font-size:0.78rem; color:var(--mid); }
+ .review-meta strong { color:var(--forest); }
+ .review-content { margin-top:0.9rem; background:white; border:1.5px solid var(--mist);
+ border-radius:12px; padding:0.9rem; white-space:pre-wrap; word-break:break-word;
+ font-size:0.9rem; line-height:1.7; color:var(--text); max-height:280px; overflow:auto; }
+ .review-actions { display:flex; gap:0.6rem; flex-wrap:wrap; justify-content:flex-end; margin-top:0.9rem; }
+
+ @media(max-width:900px){
+ .layout { grid-template-columns:1fr; }
+ .sidebar { position:static; height:auto; display:flex; flex-wrap:wrap;
+ padding:1rem; gap:0.5rem; border-right:none; border-bottom:1.5px solid var(--mist); }
+ .sidebar-section { margin-bottom:0; }
+ .main { padding:1.5rem; }
+ nav { padding:1rem 1.5rem; }
+ .stats-row { grid-template-columns:1fr 1fr; }
+ .entity-edit-form { grid-template-columns:1fr; }
+ }
+ </style>
 </head>
 <body>
 
-<!-- ── NAVBAR ── -->
+<!-- NAVBAR -->
 <nav>
-    <a href="index.html" class="nav-logo">
-        <div class="paw-icon">🐾</div>
-        <span>Paws<em>Connect</em></span>
-    </a>
-    <span class="nav-badge">🛡️ Admin Panel</span>
-    <div class="nav-right">
-        <span class="nav-user" id="adminGreeting">Loading…</span>
-        <a href="index.html" class="nav-back">← Back to Site</a>
-        <button class="logout-btn" onclick="doLogout()">Logout</button>
-    </div>
+ <a href="index.html" class="nav-logo">
+ <div class="paw-icon"> </div>
+ <span>Paws<em>Connect</em></span>
+ </a>
+ <span class="nav-badge"> Admin Panel</span>
+ <div class="nav-right">
+ <span class="nav-user" id="adminGreeting">Loading </span>
+ <a href="index.html" class="nav-back"> Back to Site</a>
+ <button class="logout-btn" onclick="doLogout()">Logout</button>
+ </div>
 </nav>
 
-<!-- ── LAYOUT ── -->
+<!-- LAYOUT -->
 <div class="layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-section">
-            <div class="sidebar-label">Overview</div>
-            <button class="sidebar-btn active" onclick="showPanel('dashboard',this)">
-                <span class="icon">📊</span> Dashboard
-            </button>
-        </div>
-        <div class="sidebar-section">
-            <div class="sidebar-label">Manage</div>
-            <button class="sidebar-btn" onclick="showPanel('users',this)">
-                <span class="icon">👥</span> Users
-                <span class="badge user sidebar-count" id="countUsers">—</span>
-            </button>
-            <button class="sidebar-btn" onclick="showPanel('listings',this)">
-                <span class="icon">🐾</span> Listings
-                <span class="badge warn sidebar-count" id="countListings">—</span>
-            </button>
-            <button class="sidebar-btn" onclick="showPanel('posts',this)">
-                <span class="icon">💬</span> Posts
-                <span class="badge green sidebar-count" id="countPosts">—</span>
-            </button>
-        </div>
-    </aside>
+ <!-- SIDEBAR -->
+ <aside class="sidebar">
+ <div class="sidebar-section">
+ <div class="sidebar-label">Overview</div>
+ <button class="sidebar-btn active" onclick="showPanel('dashboard',this)">
+ <span class="icon"> </span> Dashboard
+ </button>
+ </div>
+ <div class="sidebar-section">
+ <div class="sidebar-label">Manage</div>
+ <button class="sidebar-btn" onclick="showPanel('users',this)">
+ <span class="icon"> </span> Users
+ <span class="badge user sidebar-count" id="countUsers"> </span>
+ </button>
+ <button class="sidebar-btn" onclick="showPanel('listings',this)">
+ <span class="icon"> </span> Listings
+ <span class="badge warn sidebar-count" id="countListings"> </span>
+ </button>
+ <button class="sidebar-btn" onclick="showPanel('blog-submissions',this)">
+ <span class="icon"> </span> Blog Submissions
+ <span class="badge red sidebar-count" id="countBlogSubmissions"> </span>
+ </button>
+ <button class="sidebar-btn" onclick="showPanel('posts',this)">
+ <span class="icon"> </span> Posts
+ <span class="badge green sidebar-count" id="countPosts"> </span>
+ </button>
+ </div>
+ </aside>
 
-    <!-- MAIN CONTENT -->
-    <main class="main">
+ <!-- MAIN CONTENT -->
+ <main class="main">
 
-        <!-- ── DASHBOARD PANEL ── -->
-        <div class="panel active" id="panel-dashboard">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Admin <em>Dashboard</em></h2>
-                    <p class="section-sub">Overview of all platform activity</p>
-                </div>
-                <button class="refresh-btn" onclick="loadAll()">↻ Refresh All</button>
-            </div>
+ <!-- DASHBOARD PANEL -->
+ <div class="panel active" id="panel-dashboard">
+ <div class="section-header">
+ <div>
+ <h2 class="section-title">Admin <em>Dashboard</em></h2>
+ <p class="section-sub">Overview of all platform activity</p>
+ </div>
+ <button class="refresh-btn" onclick="loadAll()"> Refresh All</button>
+ </div>
 
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-label">Total Users</div>
-                    <div class="stat-num" id="stat-users">—</div>
-                    <div class="stat-sub">registered accounts</div>
-                </div>
-                <div class="stat-card warn">
-                    <div class="stat-label">Pending Listings</div>
-                    <div class="stat-num" id="stat-pending">—</div>
-                    <div class="stat-sub">awaiting review</div>
-                </div>
-                <div class="stat-card ok">
-                    <div class="stat-label">Approved Listings</div>
-                    <div class="stat-num" id="stat-approved">—</div>
-                    <div class="stat-sub">live on marketplace</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Community Posts</div>
-                    <div class="stat-num" id="stat-posts">—</div>
-                    <div class="stat-sub">total posts</div>
-                </div>
-            </div>
+ <div class="stats-row">
+ <div class="stat-card">
+ <div class="stat-label">Total Users</div>
+ <div class="stat-num" id="stat-users"> </div>
+ <div class="stat-sub">registered accounts</div>
+ </div>
+ <div class="stat-card warn">
+ <div class="stat-label">Pending Listings</div>
+ <div class="stat-num" id="stat-pending"> </div>
+ <div class="stat-sub">awaiting review</div>
+ </div>
+ <div class="stat-card ok">
+ <div class="stat-label">Approved Listings</div>
+ <div class="stat-num" id="stat-approved"> </div>
+ <div class="stat-sub">live on marketplace</div>
+ </div>
+ <div class="stat-card">
+ <div class="stat-label">Community Posts</div>
+ <div class="stat-num" id="stat-posts"> </div>
+ <div class="stat-sub">total posts</div>
+ </div>
+ <div class="stat-card warn">
+ <div class="stat-label">Pending Blog Submissions</div>
+ <div class="stat-num" id="stat-pending-blogs"> </div>
+ <div class="stat-sub">awaiting approval</div>
+ </div>
+ </div>
 
-            <div class="table-wrap">
-                <div class="table-top">
-                    <h4>⏳ Listings Pending Approval</h4>
-                </div>
-                <div id="pending-table-body">
-                    <div class="loading"><div class="spinner"></div></div>
-                </div>
-            </div>
-        </div>
+ <div class="table-wrap">
+ <div class="table-top">
+ <h4> Listings Pending Approval</h4>
+ </div>
+ <div id="pending-table-body">
+ <div class="loading"><div class="spinner"></div></div>
+ </div>
+ </div>
+ </div>
 
-        <!-- ── USERS PANEL ── -->
-        <div class="panel" id="panel-users">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Manage <em>Users</em></h2>
-                    <p class="section-sub">Promote to admin, demote, or delete accounts</p>
-                </div>
-                <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
-            </div>
-            <div class="table-wrap">
-                <div class="table-top">
-                    <h4>All Registered Users</h4>
-                    <input class="search-input" placeholder="🔍  Search by name or email…"
-                           oninput="filterTable('users-tbody', this.value)"/>
-                </div>
-                <div id="users-table-body">
-                    <div class="loading"><div class="spinner"></div></div>
-                </div>
-            </div>
-        </div>
+ <!-- USERS PANEL -->
+ <div class="panel" id="panel-users">
+ <div class="section-header">
+ <div>
+ <h2 class="section-title">Manage <em>Users</em></h2>
+ <p class="section-sub">Promote to admin, demote, or delete accounts</p>
+ </div>
+ <button class="refresh-btn" onclick="loadUsers()"> Refresh</button>
+ </div>
+ <div class="table-wrap">
+ <div class="table-top">
+ <h4>All Registered Users</h4>
+ <input class="search-input" placeholder=" Search by name or email "
+ oninput="filterTable('users-tbody', this.value)"/>
+ </div>
+ <div id="users-table-body">
+ <div class="loading"><div class="spinner"></div></div>
+ </div>
+ </div>
+ </div>
 
-        <!-- ── LISTINGS PANEL ── -->
-        <div class="panel" id="panel-listings">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Manage <em>Listings</em></h2>
-                    <p class="section-sub">Approve, reject, or delete animal listings</p>
-                </div>
-                <button class="refresh-btn" onclick="loadListings()">↻ Refresh</button>
-            </div>
-            <div class="table-wrap">
-                <div class="table-top">
-                    <h4>All Listings</h4>
-                    <input class="search-input" placeholder="🔍  Search by animal, breed, seller…"
-                           oninput="filterTable('listings-tbody', this.value)"/>
-                </div>
-                <div id="listings-table-body">
-                    <div class="loading"><div class="spinner"></div></div>
-                </div>
-            </div>
-        </div>
+ <!-- LISTINGS PANEL -->
+ <div class="panel" id="panel-listings">
+ <div class="section-header">
+ <div>
+ <h2 class="section-title">Manage <em>Listings</em></h2>
+ <p class="section-sub">Approve, reject, or delete animal listings</p>
+ </div>
+ <button class="refresh-btn" onclick="loadListings()"> Refresh</button>
+ </div>
+ <div class="table-wrap">
+ <div class="table-top">
+ <h4>All Listings</h4>
+ <input class="search-input" placeholder=" Search by animal, breed, seller "
+ oninput="filterTable('listings-tbody', this.value)"/>
+ </div>
+ <div id="listings-table-body">
+ <div class="loading"><div class="spinner"></div></div>
+ </div>
+ </div>
+ </div>
 
-        <!-- ── POSTS PANEL ── -->
-        <div class="panel" id="panel-posts">
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">Manage <em>Posts</em></h2>
-                    <p class="section-sub">Edit or delete community posts</p>
-                </div>
-                <button class="refresh-btn" onclick="loadPosts()">↻ Refresh</button>
-            </div>
-            <div class="table-wrap">
-                <div class="table-top">
-                    <h4>All Community Posts</h4>
-                    <input class="search-input" placeholder="🔍  Search by content or author…"
-                           oninput="filterTable('posts-tbody', this.value)"/>
-                </div>
-                <div id="posts-table-body">
-                    <div class="loading"><div class="spinner"></div></div>
-                </div>
-            </div>
-        </div>
+ <!-- BLOG SUBMISSIONS PANEL -->
+ <div class="panel" id="panel-blog-submissions">
+ <div class="section-header">
+ <div>
+ <h2 class="section-title">Blog <em>Submissions</em></h2>
+ <p class="section-sub">Review and approve blog stories for publication</p>
+ </div>
+ <button class="refresh-btn" onclick="loadBlogSubmissions()"> Refresh</button>
+ </div>
+ <div class="table-wrap">
+ <div class="table-top">
+ <h4>Pending Blog Submissions</h4>
+ <input class="search-input" placeholder=" Search by title or author "
+ oninput="filterTable('blog-submissions-tbody', this.value)"/>
+ </div>
+ <div id="blog-submissions-table-body">
+ <div class="loading"><div class="spinner"></div></div>
+ </div>
+ </div>
+ </div>
 
-    </main>
+ <!-- POSTS PANEL -->
+ <div class="panel" id="panel-posts">
+ <div class="section-header">
+ <div>
+ <h2 class="section-title">Manage <em>Posts</em></h2>
+ <p class="section-sub">Edit or delete community posts</p>
+ </div>
+ <button class="refresh-btn" onclick="loadPosts()"> Refresh</button>
+ </div>
+ <div class="table-wrap">
+ <div class="table-top">
+ <h4>All Community Posts</h4>
+ <input class="search-input" placeholder=" Search by content or author "
+ oninput="filterTable('posts-tbody', this.value)"/>
+ </div>
+ <div id="posts-table-body">
+ <div class="loading"><div class="spinner"></div></div>
+ </div>
+ </div>
+ </div>
+
+ </main>
 </div>
 
-<!-- ── TOAST ── -->
+<!-- TOAST -->
 <div id="toast"></div>
 
-<!-- ── CONFIRM MODAL ── -->
+<!-- CONFIRM MODAL -->
 <div class="confirm-overlay" id="confirmOverlay">
-    <div class="confirm-box">
-        <h4 id="confirmTitle">Are you sure?</h4>
-        <p  id="confirmMsg">This action cannot be undone.</p>
-        <div class="confirm-btns">
-            <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
-            <button class="confirm-ok"     id="confirmOkBtn">Yes, proceed</button>
-        </div>
-    </div>
+ <div class="confirm-box">
+ <h4 id="confirmTitle">Are you sure?</h4>
+ <p id="confirmMsg">This action cannot be undone.</p>
+ <div class="confirm-btns">
+ <button class="confirm-cancel" onclick="closeConfirm()">Cancel</button>
+ <button class="confirm-ok" id="confirmOkBtn">Yes, proceed</button>
+ </div>
+ </div>
 </div>
 
-<!-- ── EDIT MODAL ── -->
-<div class="edit-overlay" id="editOverlay">
-    <div class="edit-box">
-        <h4>Edit Post Content</h4>
-        <textarea id="editTextarea" rows="5"></textarea>
-        <div class="edit-btns">
-            <button class="edit-cancel" onclick="closeEdit()">Cancel</button>
-            <button class="edit-save"   id="editSaveBtn">Save Changes</button>
-        </div>
-    </div>
+<!-- EDIT MODAL -->
+<div class="entity-edit-overlay" id="entityEditOverlay" onclick="handleEntityEditOverlay(event)">
+ <div class="entity-edit-box">
+ <div class="review-head">
+ <h4 id="entityEditTitle">Edit</h4>
+ <button class="review-close" type="button" onclick="closeEntityEdit()" aria-label="Close editor">X</button>
+ </div>
+ <form class="entity-edit-form" id="entityEditForm"></form>
+ <div class="edit-btns">
+ <button class="edit-cancel" type="button" onclick="closeEntityEdit()">Cancel</button>
+ <button class="edit-save" type="button" id="entityEditSaveBtn">Save Changes</button>
+ </div>
+ </div>
+</div>
+
+<!-- BLOG REVIEW MODAL -->
+<div class="review-overlay" id="reviewOverlay" onclick="handleBlogReviewOverlay(event)">
+ <div class="review-box">
+ <div class="review-head">
+ <h4 id="reviewTitle">Blog Review</h4>
+ <button class="review-close" type="button" onclick="closeBlogReview()" aria-label="Close review">X</button>
+ </div>
+ <div class="review-meta">
+ <div><strong>Author:</strong> <span id="reviewAuthor"> </span></div>
+ <div><strong>Status:</strong> <span id="reviewStatus"> </span></div>
+ <div><strong>Topic:</strong> <span id="reviewTopic"> </span></div>
+ <div><strong>Submitted:</strong> <span id="reviewDate"> </span></div>
+ <div style="grid-column:1/-1"><strong>Location:</strong> <span id="reviewLocation"> </span></div>
+ </div>
+ <div class="review-content" id="reviewContent"></div>
+ <div class="review-actions">
+ <button class="btn btn-edit" onclick="editFromReview()">Edit</button>
+ <button class="btn btn-approve" onclick="approveFromReview()"> Approve</button>
+ <button class="btn btn-reject" onclick="rejectFromReview()"> Reject</button>
+ <button class="btn btn-delete" onclick="deleteFromReview()"> Delete</button>
+ </div>
+ </div>
 </div>
 
 <script>
-    // ════════════════════════════════════════════════════════════════════════════
-    // CONFIG
-    // ════════════════════════════════════════════════════════════════════════════
-    const BASE = '/PawsConnect';
+ // 
+ // CONFIG
+ // 
+ const BASE = window.location.pathname.endsWith('/admin.html')
+ ? window.location.pathname.slice(0, -'/admin.html'.length)
+ : '';
+ let _blogSubmissionsById = new Map();
+ let _usersById = new Map();
+ let _listingsById = new Map();
+ let _postsById = new Map();
+ let _reviewSubmissionId = null;
+ let _entityEditMode = null;
+ let _entityEditId = null;
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // BOOT — guard: only admin can be here
-    // ════════════════════════════════════════════════════════════════════════════
-    document.addEventListener('DOMContentLoaded', async () => {
-        try {
-            const res  = await fetch(BASE + '/api/session');
-            const data = await res.json();
+ // 
+ // BOOT guard: only admin can be here
+ // 
+ document.addEventListener('DOMContentLoaded', async () => {
+ try {
+ const res = await fetch(BASE + '/api/session');
+ const data = await res.json();
 
-            if (!data.loggedIn || data.user.role !== 'admin') {
-                // Not logged in or not admin — send back to login
-                window.location.href = 'login.html';
-                return;
-            }
+ if (!data.loggedIn || data.user.role !== 'admin') {
+ // Not logged in or not admin send back to login
+ window.location.href = 'login.html';
+ return;
+ }
 
-            const firstName = data.user.fullName.split(' ')[0];
-            document.getElementById('adminGreeting').textContent = '🛡️ ' + firstName;
+ const firstName = data.user.fullName.split(' ')[0];
+ document.getElementById('adminGreeting').textContent = ' ' + firstName;
 
-            // Load everything on boot
-            loadAll();
-        } catch (err) {
-            console.error('Session check failed:', err);
-            window.location.href = 'login.html';
-        }
-    });
+ // Load everything on boot
+ loadAll();
+ } catch (err) {
+ console.error('Session check failed:', err);
+ window.location.href = 'login.html';
+ }
+ });
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // PANEL SWITCHING
-    // ════════════════════════════════════════════════════════════════════════════
-    function showPanel(name, btn) {
-        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('panel-' + name).classList.add('active');
-        btn.classList.add('active');
+ // 
+ // PANEL SWITCHING
+ // 
+ function showPanel(name, btn) {
+ document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+ document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+ document.getElementById('panel-' + name).classList.add('active');
+ btn.classList.add('active');
 
-        // Lazy-load on first visit to each panel
-        if (name === 'users')    loadUsers();
-        if (name === 'listings') loadListings();
-        if (name === 'posts')    loadPosts();
-    }
+ // Lazy-load on first visit to each panel
+ if (name === 'users') loadUsers();
+ if (name === 'listings') loadListings();
+ if (name === 'blog-submissions') loadBlogSubmissions();
+ if (name === 'posts') loadPosts();
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // LOAD ALL DATA
-    // ════════════════════════════════════════════════════════════════════════════
-    async function loadAll() {
-        await Promise.all([loadUsers(), loadListings(), loadPosts()]);
-    }
+ // 
+ // LOAD ALL DATA
+ // 
+ async function loadAll() {
+ await Promise.all([loadUsers(), loadListings(), loadBlogSubmissions(), loadPosts()]);
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // USERS
-    // ════════════════════════════════════════════════════════════════════════════
-    async function loadUsers() {
-        const wrap = document.getElementById('users-table-body');
-        wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+ // 
+ // USERS
+ // 
+ async function loadUsers() {
+ const wrap = document.getElementById('users-table-body');
+ wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-        try {
-            const res   = await fetch(BASE + '/admin?action=users');
-            const users = await res.json();
+ try {
+ const res = await fetch(BASE + '/admin?action=users');
+ const users = await res.json();
+ _usersById = new Map(users.map(u => [Number(u.id), u]));
 
-            document.getElementById('countUsers').textContent  = users.length;
-            document.getElementById('stat-users').textContent  = users.length;
+ document.getElementById('countUsers').textContent = users.length;
+ document.getElementById('stat-users').textContent = users.length;
 
-            if (!users.length) {
-                wrap.innerHTML = '<div class="empty"><div class="empty-icon">👥</div>No users found.</div>';
-                return;
-            }
+ if (!users.length) {
+ wrap.innerHTML = '<div class="empty"><div class="empty-icon"> </div>No users found.</div>';
+ return;
+ }
 
-            wrap.innerHTML = `
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th><th>Full Name</th><th>Email</th><th>Role</th><th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="users-tbody">
-          ${users.map(u => `
-            <tr data-search="${(u.fullName||'').toLowerCase()} ${(u.email||'').toLowerCase()}">
-              <td class="td-id">#${u.id}</td>
-              <td class="td-name">${esc(u.fullName)}</td>
-              <td class="td-email">${esc(u.email)}</td>
-              <td><span class="badge ${u.role}">${u.role}</span></td>
-              <td>
-                <div class="actions">
-                  ${u.role !== 'admin'
-                ? `<button class="btn btn-promote"
-                         onclick="confirmAction('Promote to Admin',
-                           'Make <strong>${esc(u.fullName)}</strong> an admin? They will have full panel access.',
-                           () => updateUserRole(${u.id},'admin'))">
-                         ↑ Promote
-                       </button>`
-                : `<button class="btn btn-demote"
-                         onclick="confirmAction('Demote to User',
-                           'Remove admin access from <strong>${esc(u.fullName)}</strong>?',
-                           () => updateUserRole(${u.id},'user'))">
-                         ↓ Demote
-                       </button>`
-            }
-                  <button class="btn btn-delete"
-                    onclick="confirmAction('Delete User',
-                      'Permanently delete <strong>${esc(u.fullName)}</strong>? This cannot be undone.',
-                      () => deleteUser(${u.id}))">
-                    🗑 Delete
-                  </button>
-                </div>
-              </td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
-        } catch (err) {
-            wrap.innerHTML = '<div class="empty">Failed to load users.</div>';
-        }
-    }
+ wrap.innerHTML = `
+ <table>
+ <thead>
+ <tr>
+ <th>ID</th><th>Full Name</th><th>Email</th><th>Role</th><th>Actions</th>
+ </tr>
+ </thead>
+ <tbody id="users-tbody">
+ ${users.map(u => `
+ <tr data-search="${(u.fullName||'').toLowerCase()} ${(u.email||'').toLowerCase()}">
+ <td class="td-id">#${u.id}</td>
+ <td class="td-name">${esc(u.fullName)}</td>
+ <td class="td-email">${esc(u.email)}</td>
+ <td><span class="badge ${u.role}">${u.role}</span></td>
+ <td>
+ <div class="actions">
+ <button class="btn btn-edit" onclick="openUserEdit(${u.id})">Edit</button>
+ ${u.role !== 'admin'
+ ? `<button class="btn btn-promote"
+ onclick="confirmAction('Promote to Admin',
+ 'Make <strong>${esc(u.fullName)}</strong> an admin? They will have full panel access.',
+ () => updateUserRole(${u.id},'admin'))">
+ Promote
+ </button>`
+ : `<button class="btn btn-demote"
+ onclick="confirmAction('Demote to User',
+ 'Remove admin access from <strong>${esc(u.fullName)}</strong>?',
+ () => updateUserRole(${u.id},'user'))">
+ Demote
+ </button>`
+ }
+ <button class="btn btn-delete"
+ onclick="confirmAction('Delete User',
+ 'Permanently delete <strong>${esc(u.fullName)}</strong>? This cannot be undone.',
+ () => deleteUser(${u.id}))">
+ Delete
+ </button>
+ </div>
+ </td>
+ </tr>`).join('')}
+ </tbody>
+ </table>`;
+ } catch (err) {
+ wrap.innerHTML = '<div class="empty">Failed to load users.</div>';
+ }
+ }
 
-    async function updateUserRole(userId, role) {
-        const ok = await adminPost({ action:'updateUserRole', userId, role });
-        if (ok) { toast('Role updated successfully'); loadUsers(); }
-    }
+ async function updateUserRole(userId, role) {
+ const ok = await adminPost({ action:'updateUserRole', userId, role });
+ if (ok) { toast('Role updated successfully'); loadUsers(); }
+ }
 
-    async function deleteUser(userId) {
-        const ok = await adminPost({ action:'deleteUser', userId });
-        if (ok) { toast('User deleted'); loadAll(); }
-    }
+ function openUserEdit(userId) {
+ const user = _usersById.get(Number(userId));
+ if (!user) { toast('Unable to find this user in the current table.', true); return; }
+ openEntityEdit('user', userId, 'Edit User', [
+ { name:'fullName', label:'Full name', value:user.fullName || '', required:true },
+ { name:'email', label:'Email address', type:'email', value:user.email || '', required:true },
+ { name:'role', label:'Role', type:'select', value:user.role || 'user',
+ options:[['user','User'],['admin','Admin']] }
+ ]);
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // LISTINGS
-    // ════════════════════════════════════════════════════════════════════════════
-    async function loadListings() {
-        const wrap        = document.getElementById('listings-table-body');
-        const pendingWrap = document.getElementById('pending-table-body');
-        wrap.innerHTML    = '<div class="loading"><div class="spinner"></div></div>';
+ async function updateUserDetails(userId, fullName, email, role) {
+ if (!fullName || !email) { toast('Name and email are required.', true); return; }
+ if (role !== 'user' && role !== 'admin') { toast('Role must be user or admin.', true); return; }
+ const ok = await adminPost({ action:'updateUser', userId, fullName, email, role });
+ if (ok) { toast('User updated'); closeEntityEdit(); loadUsers(); }
+ }
 
-        try {
-            const res      = await fetch(BASE + '/admin?action=listings');
-            const listings = await res.json();
+ async function deleteUser(userId) {
+ const ok = await adminPost({ action:'deleteUser', userId });
+ if (ok) { toast('User deleted'); loadAll(); }
+ }
 
-            const pending  = listings.filter(l => l.status === 'pending');
-            const approved = listings.filter(l => l.status === 'approved');
+ // 
+ // LISTINGS
+ // 
+ async function loadListings() {
+ const wrap = document.getElementById('listings-table-body');
+ const pendingWrap = document.getElementById('pending-table-body');
+ wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-            document.getElementById('countListings').textContent  = listings.length;
-            document.getElementById('stat-pending').textContent   = pending.length;
-            document.getElementById('stat-approved').textContent  = approved.length;
+ try {
+ const res = await fetch(BASE + '/admin?action=listings');
+ const listings = await res.json();
+ _listingsById = new Map(listings.map(l => [Number(l.id), l]));
 
-            // Dashboard pending table
-            pendingWrap.innerHTML = pending.length
-                ? renderListingsTable(pending, 'pending-tbody')
-                : '<div class="empty"><div class="empty-icon">✅</div>No pending listings — all clear!</div>';
+ const pending = listings.filter(l => l.status === 'pending');
+ const approved = listings.filter(l => l.status === 'approved');
 
-            // Full listings table
-            wrap.innerHTML = listings.length
-                ? renderListingsTable(listings, 'listings-tbody')
-                : '<div class="empty"><div class="empty-icon">🐾</div>No listings yet.</div>';
+ document.getElementById('countListings').textContent = listings.length;
+ document.getElementById('stat-pending').textContent = pending.length;
+ document.getElementById('stat-approved').textContent = approved.length;
 
-        } catch (err) {
-            wrap.innerHTML = '<div class="empty">Failed to load listings.</div>';
-        }
-    }
+ // Dashboard pending table
+ pendingWrap.innerHTML = pending.length
+ ? renderListingsTable(pending, 'pending-tbody')
+ : '<div class="empty"><div class="empty-icon"> </div>No pending listings all clear!</div>';
 
-    function renderListingsTable(listings, tbodyId) {
-        return `
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th><th>Title</th><th>Description</th>
-          <th>Price</th><th>Seller</th><th>Status</th><th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="${tbodyId}">
-        ${listings.map(l => `
-          <tr data-search="${esc(((l.title||'')+(l.full_name||'')+(l.description||'')).toLowerCase())}">
-            <td class="td-id">#${l.id}</td>
-            <td class="td-name">${esc(l.title || '—')}</td>
-            <td style="max-width:200px;white-space:pre-wrap;word-break:break-word;font-size:0.8rem;">
-              ${esc((l.description||'—').substring(0,80))}${l.description&&l.description.length>80?'…':''}
-            </td>
-            <td>₹${l.price || '—'}</td>
-            <td>
-              <div class="td-name">${esc(l.full_name || '—')}</div>
-              <div class="td-email">${esc(l.email || '')}</div>
-            </td>
-            <td><span class="badge ${l.status || 'pending'}">${l.status || 'pending'}</span></td>
-            <td>
-              <div class="actions">
-                ${l.status !== 'approved'
-            ? `<button class="btn btn-approve"
-                       onclick="updateListing(${l.id},'approved')">✓ Approve</button>` : ''}
-                ${l.status !== 'rejected'
-            ? `<button class="btn btn-reject"
-                       onclick="updateListing(${l.id},'rejected')">✗ Reject</button>` : ''}
-                <button class="btn btn-delete"
-                  onclick="confirmAction('Delete Listing',
-                    'Permanently remove <strong>${esc(l.title||'this listing')}</strong>?',
-                    () => deleteListing(${l.id}))">
-                  🗑 Delete
-                </button>
-              </div>
-            </td>
-          </tr>`).join('')}
-      </tbody>
-    </table>`;
-    }
+ // Full listings table
+ wrap.innerHTML = listings.length
+ ? renderListingsTable(listings, 'listings-tbody')
+ : '<div class="empty"><div class="empty-icon"> </div>No listings yet.</div>';
 
-    async function updateListing(listingId, status) {
-        const ok = await adminPost({ action:'updateListing', listingId, status });
-        if (ok) { toast('Listing ' + status); loadListings(); }
-    }
+ } catch (err) {
+ wrap.innerHTML = '<div class="empty">Failed to load listings.</div>';
+ }
+ }
 
-    async function deleteListing(listingId) {
-        const ok = await adminPost({ action:'deleteListing', listingId });
-        if (ok) { toast('Listing deleted'); loadListings(); }
-    }
+ function renderListingsTable(listings, tbodyId) {
+ return `
+ <table>
+ <thead>
+ <tr>
+ <th>ID</th><th>Title</th><th>Description</th>
+ <th>Price</th><th>Seller</th><th>Status</th><th>Actions</th>
+ </tr>
+ </thead>
+ <tbody id="${tbodyId}">
+ ${listings.map(l => `
+ <tr data-search="${esc(((l.title||'')+(l.full_name||'')+(l.description||'')).toLowerCase())}">
+ <td class="td-id">#${l.id}</td>
+ <td class="td-name">${esc(l.title || ' ')}</td>
+ <td style="max-width:200px;white-space:pre-wrap;word-break:break-word;font-size:0.8rem;">
+ ${esc((l.description||' ').substring(0,80))}${l.description&&l.description.length>80?' ':''}
+ </td>
+ <td> ${l.price || ' '}</td>
+ <td>
+ <div class="td-name">${esc(l.full_name || ' ')}</div>
+ <div class="td-email">${esc(l.email || '')}</div>
+ </td>
+ <td><span class="badge ${l.status || 'pending'}">${l.status || 'pending'}</span></td>
+ <td>
+ <div class="actions">
+ <button class="btn btn-edit" onclick="openListingEdit(${l.id})">Edit</button>
+ ${l.status !== 'approved'
+ ? `<button class="btn btn-approve"
+ onclick="updateListing(${l.id},'approved')"> Approve</button>` : ''}
+ ${l.status !== 'rejected'
+ ? `<button class="btn btn-reject"
+ onclick="updateListing(${l.id},'rejected')"> Reject</button>` : ''}
+ <button class="btn btn-delete"
+ onclick="confirmAction('Delete Listing',
+ 'Permanently remove <strong>${esc(l.title||'this listing')}</strong>?',
+ () => deleteListing(${l.id}))">
+ Delete
+ </button>
+ </div>
+ </td>
+ </tr>`).join('')}
+ </tbody>
+ </table>`;
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // POSTS
-    // ════════════════════════════════════════════════════════════════════════════
-    async function loadPosts() {
-        const wrap = document.getElementById('posts-table-body');
-        wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+ async function updateListing(listingId, status) {
+ const ok = await adminPost({ action:'updateListing', listingId, status });
+ if (ok) { toast('Listing ' + status); loadListings(); }
+ }
 
-        try {
-            const res   = await fetch(BASE + '/admin?action=posts');
-            const posts = await res.json();
+ function openListingEdit(listingId) {
+ const listing = _listingsById.get(Number(listingId));
+ if (!listing) { toast('Unable to find this listing in the current table.', true); return; }
+ openEntityEdit('listing', listingId, 'Edit Marketplace Listing', [
+ { name:'title', label:'Listing title', value:listing.title || '', required:true },
+ { name:'price', label:'Price', type:'number', value:listing.price || '', required:true },
+ { name:'status', label:'Status', type:'select', value:listing.status || 'pending',
+ options:[['pending','Pending'],['approved','Approved'],['rejected','Rejected']] },
+ { name:'description', label:'Description', type:'textarea', value:listing.description || '', full:true }
+ ]);
+ }
 
-            document.getElementById('countPosts').textContent = posts.length;
-            document.getElementById('stat-posts').textContent = posts.length;
+ async function updateListingDetails(listingId, title, description, price, status) {
+ if (!title || !Number(price) || Number(price) <= 0) {
+ toast('Title and a valid price are required.', true);
+ return;
+ }
+ if (!['pending','approved','rejected'].includes(status)) {
+ toast('Status must be pending, approved, or rejected.', true);
+ return;
+ }
+ const ok = await adminPost({ action:'updateListingDetails', listingId, title, description, price, status });
+ if (ok) { toast('Listing updated'); closeEntityEdit(); loadListings(); }
+ }
 
-            if (!posts.length) {
-                wrap.innerHTML = '<div class="empty"><div class="empty-icon">💬</div>No posts yet.</div>';
-                return;
-            }
+ async function deleteListing(listingId) {
+ const ok = await adminPost({ action:'deleteListing', listingId });
+ if (ok) { toast('Listing deleted'); loadListings(); }
+ }
 
-            wrap.innerHTML = `
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Author</th><th>Content</th><th>Posted</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="posts-tbody">
-          ${posts.map(p => `
-            <tr data-search="${esc((p.content||'')+(p.full_name||'')).toLowerCase()}">
-              <td class="td-id">#${p.id}</td>
-              <td>
-                <div class="td-name">${esc(p.full_name||'—')}</div>
-                <div class="td-email">${esc(p.email||'')}</div>
-              </td>
-              <td style="max-width:300px;white-space:pre-wrap;word-break:break-word;">
-                ${esc((p.content||'').substring(0,120))}${p.content&&p.content.length>120?'…':''}
-              </td>
-              <td style="white-space:nowrap;font-size:0.78rem;color:var(--light)">
-                ${p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN') : '—'}
-              </td>
-              <td>
-                <div class="actions">
-                  <button class="btn btn-edit"
-                    onclick="openEdit(${p.id}, ${JSON.stringify(esc(p.content||''))})">
-                    ✎ Edit
-                  </button>
-                  <button class="btn btn-delete"
-                    onclick="confirmAction('Delete Post',
-                      'Permanently delete this post by <strong>${esc(p.full_name||'user')}</strong>?',
-                      () => deletePost(${p.id}))">
-                    🗑 Delete
-                  </button>
-                </div>
-              </td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
-        } catch (err) {
-            wrap.innerHTML = '<div class="empty">Failed to load posts.</div>';
-        }
-    }
+ // 
+ // BLOG SUBMISSIONS
+ // 
+ async function loadBlogSubmissions() {
+ const wrap = document.getElementById('blog-submissions-table-body');
+ wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-    async function deletePost(postId) {
-        const ok = await adminPost({ action:'deletePost', postId });
-        if (ok) { toast('Post deleted'); loadPosts(); }
-    }
+ try {
+ const res = await fetch(BASE + '/admin?action=blog-submissions');
+ const submissions = await res.json();
+ _blogSubmissionsById = new Map(submissions.map(s => [Number(s.id), s]));
 
-    async function updatePost(postId, content) {
-        const ok = await adminPost({ action:'updatePost', postId, content });
-        if (ok) { toast('Post updated'); loadPosts(); }
-    }
+ const pending = submissions.filter(s => s.status === 'pending');
+ const approved = submissions.filter(s => s.status === 'approved');
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // SHARED API CALL
-    // ════════════════════════════════════════════════════════════════════════════
-    async function adminPost(params) {
-        try {
-            const body = new URLSearchParams(params);
-            const res  = await fetch(BASE + '/admin', { method:'POST', body });
-            const data = await res.json();
-            if (!data.success) { toast(data.error || 'Action failed.', true); return false; }
-            return true;
-        } catch (err) {
-            toast('Network error. Try again.', true);
-            return false;
-        }
-    }
+ document.getElementById('countBlogSubmissions').textContent = pending.length;
+ document.getElementById('stat-pending-blogs').textContent = pending.length;
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // CONFIRM MODAL
-    // ════════════════════════════════════════════════════════════════════════════
-    let _confirmCallback = null;
+ wrap.innerHTML = submissions.length
+ ? renderBlogSubmissionsTable(submissions, 'blog-submissions-tbody')
+ : '<div class="empty"><div class="empty-icon"> </div>No blog submissions yet.</div>';
 
-    function confirmAction(title, msg, callback) {
-        document.getElementById('confirmTitle').textContent = title;
-        document.getElementById('confirmMsg').innerHTML     = msg;
-        _confirmCallback = callback;
-        document.getElementById('confirmOverlay').classList.add('open');
-    }
+ } catch (err) {
+ console.error('Failed to load blog submissions:', err);
+ wrap.innerHTML = '<div class="empty">Failed to load blog submissions.</div>';
+ }
+ }
 
-    function closeConfirm() {
-        _confirmCallback = null;
-        document.getElementById('confirmOverlay').classList.remove('open');
-    }
+ function renderBlogSubmissionsTable(submissions, tbodyId) {
+ return `
+ <table>
+ <thead>
+ <tr>
+ <th>ID</th><th>Title</th><th>Author</th><th>Topic</th><th>Status</th><th>Submitted</th><th>Actions</th>
+ </tr>
+ </thead>
+ <tbody id="${tbodyId}">
+ ${submissions.map(s => `
+ <tr data-search="${esc(((s.title||'')+(s.full_name||'')+(s.content||'')).toLowerCase())}">
+ <td class="td-id">#${s.id}</td>
+ <td class="td-name">${esc(s.title || ' ')}</td>
+ <td>
+ <div class="td-name">${esc(s.author_name || s.full_name || ' ')}</div>
+ <div class="td-email">${esc(s.email || '')}</div>
+ </td>
+ <td style="font-size:0.8rem;">${esc(s.topic || ' ')}</td>
+ <td><span class="badge ${s.status || 'pending'}">${s.status || 'pending'}</span></td>
+ <td style="white-space:nowrap;font-size:0.78rem;color:var(--light)">
+ ${s.created_at ? new Date(s.created_at).toLocaleDateString('en-IN') : ' '}
+ </td>
+ <td>
+ <div class="actions">
+ <button class="btn btn-edit"
+ onclick="openBlogReview(${s.id})"> Review</button>
+ <button class="btn btn-edit" onclick="openBlogEdit(${s.id})">Edit</button>
+ ${s.status !== 'approved'
+ ? `<button class="btn btn-approve"
+ onclick="approveBlog(${s.id})"> Approve</button>` : ''}
+ ${s.status !== 'rejected'
+ ? `<button class="btn btn-reject"
+ onclick="rejectBlog(${s.id})"> Reject</button>` : ''}
+ <button class="btn btn-delete"
+ onclick="confirmAction('Delete Submission',
+ 'Permanently delete this blog submission by <strong>${esc(s.author_name||s.full_name||'user')}</strong>?',
+ () => deleteBlogSubmission(${s.id}))">
+ Delete
+ </button>
+ </div>
+ </td>
+ </tr>`).join('')}
+ </tbody>
+ </table>`;
+ }
 
-    document.getElementById('confirmOkBtn').addEventListener('click', () => {
-        closeConfirm();
-        if (_confirmCallback) _confirmCallback();
-    });
+ async function approveBlog(submissionId) {
+ const ok = await adminPost({ action:'approveBlog', submissionId });
+ if (ok) { toast('Blog approved and published!'); loadBlogSubmissions(); }
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // EDIT MODAL (posts)
-    // ════════════════════════════════════════════════════════════════════════════
-    let _editPostId = null;
+ async function rejectBlog(submissionId) {
+ const ok = await adminPost({ action:'rejectBlog', submissionId });
+ if (ok) { toast('Blog rejected'); loadBlogSubmissions(); }
+ }
 
-    function openEdit(postId, content) {
-        _editPostId = postId;
-        document.getElementById('editTextarea').value = content;
-        document.getElementById('editOverlay').classList.add('open');
-    }
+ async function deleteBlogSubmission(submissionId) {
+ const ok = await adminPost({ action:'deleteBlog', submissionId });
+ if (ok) { toast('Blog submission deleted'); loadBlogSubmissions(); }
+ }
 
-    function closeEdit() {
-        _editPostId = null;
-        document.getElementById('editOverlay').classList.remove('open');
-    }
+ function openBlogReview(submissionId) {
+ const submission = _blogSubmissionsById.get(Number(submissionId));
+ if (!submission) {
+ toast('Unable to open review for this submission.', true);
+ return;
+ }
 
-    document.getElementById('editSaveBtn').addEventListener('click', async () => {
-        const content = document.getElementById('editTextarea').value.trim();
-        if (!content) { toast('Content cannot be empty.', true); return; }
-        closeEdit();
-        await updatePost(_editPostId, content);
-    });
+ _reviewSubmissionId = Number(submissionId);
+ document.getElementById('reviewTitle').textContent = submission.title || 'Untitled submission';
+ document.getElementById('reviewAuthor').textContent = submission.author_name || submission.full_name || 'Unknown';
+ document.getElementById('reviewStatus').textContent = submission.status || 'pending';
+ document.getElementById('reviewTopic').textContent = submission.topic || ' ';
+ document.getElementById('reviewDate').textContent = submission.created_at
+ ? new Date(submission.created_at).toLocaleString('en-IN')
+ : ' ';
+ document.getElementById('reviewLocation').textContent = submission.location || ' ';
+ document.getElementById('reviewContent').textContent = submission.content || 'No content provided.';
+ document.getElementById('reviewOverlay').classList.add('open');
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // SEARCH / FILTER
-    // ════════════════════════════════════════════════════════════════════════════
-    function filterTable(tbodyId, query) {
-        const tbody = document.getElementById(tbodyId);
-        if (!tbody) return;
-        const q = query.toLowerCase();
-        tbody.querySelectorAll('tr').forEach(row => {
-            const text = row.getAttribute('data-search') || '';
-            row.style.display = text.includes(q) ? '' : 'none';
-        });
-    }
+ function openBlogEdit(submissionId) {
+ const submission = _blogSubmissionsById.get(Number(submissionId));
+ if (!submission) { toast('Unable to find this blog submission.', true); return; }
+ openEntityEdit('blog', submissionId, 'Edit Blog Submission', [
+ { name:'title', label:'Blog title', value:submission.title || '', required:true },
+ { name:'topic', label:'Topic', value:submission.topic || '' },
+ { name:'authorName', label:'Author name', value:submission.author_name || submission.full_name || '' },
+ { name:'location', label:'Location', value:submission.location || '' },
+ { name:'status', label:'Status', type:'select', value:submission.status || 'pending',
+ options:[['pending','Pending'],['approved','Approved'],['rejected','Rejected']] },
+ { name:'content', label:'Blog content', type:'textarea', value:submission.content || '', full:true, required:true }
+ ]);
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // TOAST
-    // ════════════════════════════════════════════════════════════════════════════
-    let _toastTimer = null;
-    function toast(msg, isError = false) {
-        const el = document.getElementById('toast');
-        el.textContent = msg;
-        el.className   = 'show' + (isError ? ' error' : '');
-        clearTimeout(_toastTimer);
-        _toastTimer = setTimeout(() => { el.className = ''; }, 3000);
-    }
+ async function updateBlogSubmission(submissionId, title, content, topic, authorName, location, status) {
+ if (!title || !content) { toast('Title and content are required.', true); return; }
+ if (!['pending','approved','rejected'].includes(status)) {
+ toast('Status must be pending, approved, or rejected.', true);
+ return;
+ }
+ const ok = await adminPost({
+ action:'updateBlog',
+ submissionId,
+ title,
+ content,
+ topic,
+ authorName,
+ location,
+ status
+ });
+ if (ok) { toast('Blog submission updated'); closeEntityEdit(); loadBlogSubmissions(); closeBlogReview(); }
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // LOGOUT
-    // ════════════════════════════════════════════════════════════════════════════
-    async function doLogout() {
-        await fetch(BASE + '/logout');
-        window.location.href = 'login.html';
-    }
+ function closeBlogReview() {
+ _reviewSubmissionId = null;
+ const overlay = document.getElementById('reviewOverlay');
+ if (overlay) overlay.classList.remove('open');
+ }
 
-    // ════════════════════════════════════════════════════════════════════════════
-    // UTILS
-    // ════════════════════════════════════════════════════════════════════════════
-    function esc(str) {
-        return String(str)
-            .replace(/&/g,'&amp;')
-            .replace(/</g,'&lt;')
-            .replace(/>/g,'&gt;')
-            .replace(/"/g,'&quot;');
-    }
+ function handleBlogReviewOverlay(event) {
+ if (event.target && event.target.id === 'reviewOverlay') closeBlogReview();
+ }
+
+ function editFromReview() {
+ if (_reviewSubmissionId == null) return;
+ openBlogEdit(_reviewSubmissionId);
+ }
+
+ async function approveFromReview() {
+ if (_reviewSubmissionId == null) return;
+ const id = _reviewSubmissionId;
+ closeBlogReview();
+ await approveBlog(id);
+ }
+
+ async function rejectFromReview() {
+ if (_reviewSubmissionId == null) return;
+ const id = _reviewSubmissionId;
+ closeBlogReview();
+ await rejectBlog(id);
+ }
+
+ function deleteFromReview() {
+ if (_reviewSubmissionId == null) return;
+ const id = _reviewSubmissionId;
+ closeBlogReview();
+ confirmAction(
+ 'Delete Submission',
+ 'Permanently delete this blog submission?',
+ () => deleteBlogSubmission(id)
+ );
+ }
+
+ async function loadPosts() {
+ const wrap = document.getElementById('posts-table-body');
+ wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+ try {
+ const res = await fetch(BASE + '/admin?action=posts');
+ const posts = await res.json();
+ _postsById = new Map(posts.map(p => [Number(p.id), p]));
+
+ document.getElementById('countPosts').textContent = posts.length;
+ document.getElementById('stat-posts').textContent = posts.length;
+
+ if (!posts.length) {
+ wrap.innerHTML = '<div class="empty"><div class="empty-icon"> </div>No posts yet.</div>';
+ return;
+ }
+
+ wrap.innerHTML = `
+ <table>
+ <thead>
+ <tr><th>ID</th><th>Author</th><th>Content</th><th>Status</th><th>Posted</th><th>Actions</th></tr>
+ </thead>
+ <tbody id="posts-tbody">
+ ${posts.map(p => `
+ <tr data-search="${esc((p.content||'')+(p.full_name||'')).toLowerCase()}">
+ <td class="td-id">#${p.id}</td>
+ <td>
+ <div class="td-name">${esc(p.full_name||' ')}</div>
+ <div class="td-email">${esc(p.email||'')}</div>
+ </td>
+ <td style="max-width:300px;white-space:pre-wrap;word-break:break-word;">
+ ${esc((p.content||'').substring(0,120))}${p.content&&p.content.length>120?' ':''}
+ </td>
+ <td><span class="badge ${p.status || 'pending'}">${p.status || 'pending'}</span></td>
+ <td style="white-space:nowrap;font-size:0.78rem;color:var(--light)">
+ ${p.created_at ? new Date(p.created_at).toLocaleDateString('en-IN') : ' '}
+ </td>
+ <td>
+ <div class="actions">
+ ${p.status !== 'approved'
+ ? `<button class="btn btn-approve" onclick="updatePostStatus(${p.id},'approved')">Approve</button>` : ''}
+ ${p.status !== 'rejected'
+ ? `<button class="btn btn-reject" onclick="updatePostStatus(${p.id},'rejected')">Reject</button>` : ''}
+ <button class="btn btn-edit"
+ onclick="openPostEdit(${p.id})">
+ Edit
+ </button>
+ <button class="btn btn-delete"
+ onclick="confirmAction('Delete Post',
+ 'Permanently delete this post by <strong>${esc(p.full_name||'user')}</strong>?',
+ () => deletePost(${p.id}))">
+ Delete
+ </button>
+ </div>
+ </td>
+ </tr>`).join('')}
+ </tbody>
+ </table>`;
+ } catch (err) {
+ wrap.innerHTML = '<div class="empty">Failed to load posts.</div>';
+ }
+ }
+
+ async function deletePost(postId) {
+ const ok = await adminPost({ action:'deletePost', postId });
+ if (ok) { toast('Post deleted'); loadPosts(); }
+ }
+
+ async function updatePost(postId, content) {
+ const ok = await adminPost({ action:'updatePost', postId, content });
+ if (ok) { toast('Post updated'); closeEntityEdit(); loadPosts(); }
+ }
+
+ async function updatePostStatus(postId, status) {
+ const ok = await adminPost({ action:'updatePostStatus', postId, status });
+ if (ok) { toast('Post ' + status); loadPosts(); }
+ }
+
+ // 
+ // SHARED API CALL
+ // 
+ async function adminPost(params) {
+ try {
+ const body = new URLSearchParams(params);
+ const res = await fetch(BASE + '/admin', { method:'POST', body });
+ const raw = await res.text();
+ let data = {};
+ try {
+ data = raw ? JSON.parse(raw) : {};
+ } catch (_) {
+ toast('Server returned invalid response.', true);
+ return false;
+ }
+
+ if (!res.ok || !data.success) {
+ toast(data.error || ('Action failed (HTTP ' + res.status + ').'), true);
+ return false;
+ }
+ return true;
+ } catch (err) {
+ toast('Network error. Try again.', true);
+ return false;
+ }
+ }
+
+ // 
+ // CONFIRM MODAL
+ // 
+ let _confirmCallback = null;
+
+ function confirmAction(title, msg, callback) {
+ document.getElementById('confirmTitle').textContent = title;
+ document.getElementById('confirmMsg').innerHTML = msg;
+ _confirmCallback = callback;
+ document.getElementById('confirmOverlay').classList.add('open');
+ }
+
+ function closeConfirm() {
+ _confirmCallback = null;
+ const overlay = document.getElementById('confirmOverlay');
+ if (overlay) overlay.classList.remove('open');
+ }
+
+ document.getElementById('confirmOkBtn').addEventListener('click', () => {
+ const callback = _confirmCallback;
+ closeConfirm();
+ if (callback) callback();
+ });
+
+ // 
+ // INLINE EDIT MODAL
+ // 
+ function openPostEdit(postId) {
+ const post = _postsById.get(Number(postId));
+ if (!post) { toast('Unable to find this post in the current table.', true); return; }
+ openEdit(postId, post.content || '');
+ }
+
+ function openEdit(postId, content) {
+ openEntityEdit('post', postId, 'Edit Community Post', [
+ { name:'content', label:'Post content', type:'textarea', value:content || '', full:true, required:true }
+ ]);
+ }
+
+ function openEntityEdit(mode, id, title, fields) {
+ _entityEditMode = mode;
+ _entityEditId = Number(id);
+ document.getElementById('entityEditTitle').textContent = title;
+ document.getElementById('entityEditForm').innerHTML = fields.map(renderEditField).join('');
+ document.getElementById('entityEditOverlay').classList.add('open');
+ const firstField = document.querySelector('#entityEditForm input, #entityEditForm select, #entityEditForm textarea');
+ if (firstField) setTimeout(() => firstField.focus(), 40);
+ }
+
+ function renderEditField(field) {
+ const type = field.type || 'text';
+ const required = field.required ? ' required' : '';
+ const full = field.full || type === 'textarea' ? ' full' : '';
+ const value = esc(field.value || '');
+ if (type === 'textarea') {
+ return `<div class="entity-edit-field${full}">
+ <label for="edit_${field.name}">${esc(field.label)}</label>
+ <textarea id="edit_${field.name}" name="${esc(field.name)}"${required}>${value}</textarea>
+ </div>`;
+ }
+ if (type === 'select') {
+ const options = (field.options || []).map(option => {
+ const optionValue = Array.isArray(option) ? option[0] : option;
+ const optionLabel = Array.isArray(option) ? option[1] : option;
+ const selected = String(optionValue) === String(field.value || '') ? ' selected' : '';
+ return `<option value="${esc(optionValue)}"${selected}>${esc(optionLabel)}</option>`;
+ }).join('');
+ return `<div class="entity-edit-field${full}">
+ <label for="edit_${field.name}">${esc(field.label)}</label>
+ <select id="edit_${field.name}" name="${esc(field.name)}"${required}>${options}</select>
+ </div>`;
+ }
+ return `<div class="entity-edit-field${full}">
+ <label for="edit_${field.name}">${esc(field.label)}</label>
+ <input id="edit_${field.name}" name="${esc(field.name)}" type="${esc(type)}" value="${value}"${required}>
+ </div>`;
+ }
+
+ function readEntityEditValues() {
+ const values = {};
+ document.querySelectorAll('#entityEditForm [name]').forEach(field => {
+ values[field.name] = field.value.trim();
+ });
+ return values;
+ }
+
+ function closeEntityEdit() {
+ _entityEditMode = null;
+ _entityEditId = null;
+ const overlay = document.getElementById('entityEditOverlay');
+ if (overlay) overlay.classList.remove('open');
+ }
+
+ function handleEntityEditOverlay(event) {
+ if (event.target && event.target.id === 'entityEditOverlay') closeEntityEdit();
+ }
+
+ document.getElementById('entityEditSaveBtn').addEventListener('click', async () => {
+ const mode = _entityEditMode;
+ const id = _entityEditId;
+ const values = readEntityEditValues();
+ if (!mode || id == null) return;
+
+ if (mode === 'user') {
+ await updateUserDetails(id, values.fullName, values.email, values.role);
+ }
+ if (mode === 'listing') {
+ await updateListingDetails(id, values.title, values.description, values.price, values.status);
+ }
+ if (mode === 'blog') {
+ await updateBlogSubmission(id, values.title, values.content, values.topic, values.authorName, values.location, values.status);
+ }
+ if (mode === 'post') {
+ if (!values.content) { toast('Content cannot be empty.', true); return; }
+ await updatePost(id, values.content);
+ }
+ });
+
+ // 
+ // SEARCH / FILTER
+ // 
+ function filterTable(tbodyId, query) {
+ const tbody = document.getElementById(tbodyId);
+ if (!tbody) return;
+ const q = query.toLowerCase();
+ tbody.querySelectorAll('tr').forEach(row => {
+ const text = row.getAttribute('data-search') || '';
+ row.style.display = text.includes(q) ? '' : 'none';
+ });
+ }
+
+ // 
+ // TOAST
+ // 
+ let _toastTimer = null;
+ function toast(msg, isError = false) {
+ const el = document.getElementById('toast');
+ el.textContent = msg;
+ el.className = 'show' + (isError ? ' error' : '');
+ clearTimeout(_toastTimer);
+ _toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+ }
+
+ document.addEventListener('keydown', (event) => {
+ if (event.key !== 'Escape') return;
+ closeEntityEdit();
+ closeBlogReview();
+ closeConfirm();
+ });
+
+ // 
+ // LOGOUT
+ // 
+ async function doLogout() {
+ await fetch(BASE + '/logout');
+ window.location.href = 'login.html';
+ }
+
+ // 
+ // UTILS
+ // 
+ function esc(str) {
+ return String(str)
+ .replace(/&/g,'&amp;')
+ .replace(/</g,'&lt;')
+ .replace(/>/g,'&gt;')
+ .replace(/"/g,'&quot;');
+ }
 </script>
 </body>
 </html>

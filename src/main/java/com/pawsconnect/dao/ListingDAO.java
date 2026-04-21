@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ListingDAO {
 
-    // ── Get all listings (admin sees all statuses; public sees only approved) ─
+    // â”€â”€ Get all listings (admin sees all statuses; public sees only approved) â”€
     public List<Map<String, Object>> getAllListings(boolean adminView) {
         List<Map<String, Object>> listings = new ArrayList<>();
         String query = adminView
@@ -43,7 +43,7 @@ public class ListingDAO {
         return listings;
     }
 
-    // ── Admin: update listing status (approved / rejected / pending) ──────────
+    // â”€â”€ Admin: update listing status (approved / rejected / pending) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public boolean updateListingStatus(int listingId, String status) {
         String query = "UPDATE marketplace_items SET status = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -58,7 +58,24 @@ public class ListingDAO {
         return false;
     }
 
-    // ── Admin: delete any listing ─────────────────────────────────────────────
+    // â”€â”€ Admin: delete any listing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    public boolean updateListingDetails(int listingId, String title, String description,
+                                        double price, String status) {
+        String query = "UPDATE marketplace_items SET title = ?, description = ?, price = ?, status = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, title);
+            ps.setString(2, description);
+            ps.setDouble(3, price);
+            ps.setString(4, status);
+            ps.setInt(5, listingId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     public boolean deleteListing(int listingId) {
         String query = "DELETE FROM marketplace_items WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -72,7 +89,7 @@ public class ListingDAO {
         return false;
     }
 
-    // ── User: create a listing ────────────────────────────────────────────────
+    // â”€â”€ User: create a listing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public boolean createListing(int userId, String title,
                                  String description, double price, String imageUrl) {
         String query = "INSERT INTO marketplace_items " +

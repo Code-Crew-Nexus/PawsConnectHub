@@ -35,23 +35,26 @@ public class UserDAO {
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                // ✅ Fixed: build object first, set role, THEN return
+                // âœ… Fixed: build object first, set role, THEN return
                 User u = new User(
                         rs.getInt("id"),
                         rs.getString("full_name"),
                         rs.getString("email"),
                         rs.getString("password_hash")
                 );
-                u.setRole(rs.getString("role")); // ← was User.setRole() after return — both wrong
+                u.setRole(rs.getString("role")); // â† was User.setRole() after return â€” both wrong
                 return u;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        System.out.println("=== SQL ERROR in loginUser ===");
+        System.out.println("Message: " + e.getMessage());
+        System.out.println("SQLState: " + e.getSQLState());
+        e.printStackTrace();
+    }
         return null;
     }
 
-    // ── ADMIN: get all users ──────────────────────────────────────────────────
+    // â”€â”€ ADMIN: get all users â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         String query = "SELECT id, full_name, email, role FROM users ORDER BY id";
@@ -73,7 +76,7 @@ public class UserDAO {
         return users;
     }
 
-    // ── ADMIN: update a user's role ───────────────────────────────────────────
+    // â”€â”€ ADMIN: update a user's role â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public boolean updateUserRole(int userId, String newRole) {
         String query = "UPDATE users SET role = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();
@@ -88,7 +91,22 @@ public class UserDAO {
         return false;
     }
 
-    // ── ADMIN: delete a user ──────────────────────────────────────────────────
+    // â”€â”€ ADMIN: delete a user â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    public boolean updateUserDetails(int userId, String fullName, String email, String role) {
+        String query = "UPDATE users SET full_name = ?, email = ?, role = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, fullName);
+            ps.setString(2, email);
+            ps.setString(3, role);
+            ps.setInt(4, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     public boolean deleteUser(int userId) {
         String query = "DELETE FROM users WHERE id = ?";
         try (Connection conn = DBConnection.getConnection();

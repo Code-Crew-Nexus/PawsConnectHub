@@ -1,7 +1,12 @@
+C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\controller\AdminServlet.java
+C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\controller\BlogServlet.java
 C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\controller\LoginServlet.java
 C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\controller\LogoutServlet.java
 C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\controller\RegisterServlet.java
 C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\controller\SessionServlet.java
+C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\dao\BlogDAO.java
+C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\dao\ListingDAO.java
+C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\dao\PostDAO.java
 C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\dao\UserDAO.java
 C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\model\User.java
 C:\Users\zahee\Documents\pawsconnectV2.0\src\main\java\com\pawsconnect\util\DBConnection.java

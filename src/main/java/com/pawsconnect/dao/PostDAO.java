@@ -14,7 +14,7 @@ public class PostDAO {
         List<Map<String, Object>> posts = new ArrayList<>();
         String query = adminView
                 ? "SELECT p.*, u.full_name, u.email FROM posts p JOIN users u ON p.user_id = u.id ORDER BY p.created_at DESC"
-                : "SELECT p.*, u.full_name FROM posts p JOIN users u ON p.user_id = u.id ORDER BY p.created_at DESC";
+                : "SELECT p.*, u.full_name FROM posts p JOIN users u ON p.user_id = u.id WHERE p.status = 'approved' ORDER BY p.created_at DESC";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(query);
@@ -36,12 +36,26 @@ public class PostDAO {
     }
 
     public boolean createPost(int userId, String content) {
-        String query = "INSERT INTO posts (user_id, content) VALUES (?, ?)";
+        String query = "INSERT INTO posts (user_id, content, status) VALUES (?, ?, 'pending')";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setInt(1, userId);
             ps.setString(2, content);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updatePostStatus(int postId, String status) {
+        String query = "UPDATE posts SET status = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+
+            ps.setString(1, status);
+            ps.setInt(2, postId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
